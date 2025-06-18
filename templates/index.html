@@ -5,42 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Liste de Courses v2.1</title>
-    <!-- <style>
-        body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 0; }
-        h1 { text-align: center; margin-top: 30px; }
-        form, .btn-clear { display: flex; justify-content: center; margin: 20px 0; gap: 10px; }
-        input, button { padding: 8px; font-size: 16px; }
-        #coursesList { max-width: 500px; margin: 30px auto; padding: 0; list-style: none; }
-        #coursesList li { background: #fff; margin-bottom: 10px; padding: 12px; border-radius: 5px; display: flex; align-items: center; justify-content: space-between; transition: opacity 0.6s; }
-        .checked span { text-decoration: line-through; color: #aaa; }
-        .removing { opacity: 0.5; }
-        .categorie-list { max-width: 500px; margin: 30px auto; background: #e9ecef; border-radius: 5px; padding: 10px 20px; }
-        .categorie-list ul { display: flex; flex-wrap: wrap; gap: 10px; padding: 0; list-style: none; margin: 0; }
-        .categorie-list li { background: #d1e7dd; padding: 4px 10px; border-radius: 3px; font-size: 14px; }
-        .btn { margin-left: 6px; }
-
-        /* A garder tres bon exemple 
-        ajuster avec le JS si non tout casser */
-        li { transition: opacity 1s ease; opacity: 1; }
-        li.removing { opacity: 0; }
-
-    </style> -->
 </head>
-    <body>
-        <div class="background"></div>
-        <h1>Liste de Courses</h1>
-            <div class="container-general">
-                <form class="formulaire-course" method="POST">
-                <div class="form-grid">
-                    <div class="form-nom">
+<body>
+    <div class="background"></div>
+    <h1>Liste de Courses</h1>
+    
+    <div class="container-general">
+        <form class="formulaire-course" method="POST">
+            <div class="form-grid">
+                <div class="form-nom">
                     <label for="nom">Nom de l'article</label>
-                    <input type="text" id="nom" name="nom" placeholder="Ex: Pommes" required>
-                    </div>
-                    <div class="form-quantite">
+                    <input type="text" id="nom" name="nom" placeholder="Exemple: Pommes" required>
+                </div>
+                <div class="form-quantite">
                     <label for="quantite">Quantité</label>
-                    <input type="number" id="quantite" name="quantite" min="1" placeholder="Ex: 5" required>
-                    </div>
-                    <div class="form-categorie">
+                    <input type="number" id="quantite" name="quantite" min="1" placeholder="Exemple: 5" required>
+                </div>
+                <div class="form-categorie">
                     <label for="categorie">Catégorie</label>
                     <select id="categorie" name="categorie" required>
                         <option value="" disabled selected hidden>Choisir une catégorie</option>
@@ -56,56 +37,26 @@
                         <option value="Viande">Viande</option>
                         <option value="Autre">Autre</option>
                     </select>
-                    </div>
                 </div>
-                <button class="ajouter-btn" type="submit">Ajouter à la liste</button>
-                </form>
-                <div class="container-list">
-                    <div class="header-list">
-                        <h2>Votre liste de course</h2>
-                        <button class="btn-clear" id="clearBtn">Vider la liste <img src="../static/ico/trash3.svg" height="19" width="19"></button>
-                    </div>
-
-
-                    <ul class="liste-courses" id="coursesList">
-                        <!-- Liste générée dynamiquement par JS -->
-<!--                         
-                        {% for course in courses %}
-                        <li class="{{ 'checked' if course.checked }}">
-                            <span class="item-text">{{ course.nom }} ({{ course.quantite }}) - {{ course.categorie }}</span>
-                            <label class="static-checkbox">
-                                <input type="checkbox" class="check-btn" {% if course.checked %}checked{% endif %}>
-                                <span class="checkmark"></span>
-                            </label>
-                        </li>
-                        <div class="btn-del">
-                            <form method="POST" action="{{ url_for('delete_item', course_id=i) }}" style="display:inline;">
-                                <button type="submit" class="delete-btn">❌</button>
-                            </form>
-                        </div>
-                        {% endfor %} -->
-                    
-                    </ul>
-
-                    <!-- <div class="categorie-list">
-                        <strong>Catégories :</strong>
-                        <ul>
-                            <li>Alcool</li>
-                            <li>Apéro</li>
-                            <li>Boissons</li>
-                            <li>Épicerie</li>
-                            <li>Fruits</li>
-                            <li>Laitier</li>
-                            <li>Légumes</li>
-                            <li>Soins/Hygiène</li>
-                            <li>Surgelé</li>
-                            <li>Viande</li>
-                            <li>Autre</li>
-                        </ul>
-                    </div> -->
-                </div>  
             </div>
-                  
+            <button class="ajouter-btn" type="submit">Ajouter à la liste</button>
+        </form>
+        
+        <div class="container-list">
+            <div class="header-list">
+                <h2>Votre liste de course</h2>
+                <button class="btn-clear" id="clearBtn">
+                    Vider la liste 
+                    <img src="../static/ico/trash3.svg" height="18" width="18" alt="Supprimer">
+                </button>
+            </div>
+            
+            <ul class="liste-courses" id="coursesList">
+                <!-- Liste générée dynamiquement par JavaScript -->
+            </ul>
+        </div>  
+    </div>
+    
     <script src="{{ url_for('static', filename='script.js') }}"></script>  
-    </body>
+</body>
 </html>

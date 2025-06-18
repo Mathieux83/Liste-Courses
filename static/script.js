@@ -13,10 +13,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Animation du conteneur selon le contexte
     if (isNewItem) {
       container.classList.add('adding');
-      setTimeout(() => container.classList.remove('adding'), 500);
+      setTimeout(() => container.classList.remove('adding'), 600);
     } else if (isRemoving) {
       container.classList.add('removing-item');
-      setTimeout(() => container.classList.remove('removing-item'), 500);
+      setTimeout(() => container.classList.remove('removing-item'), 600);
     }
 
     // Gestion du conteneur vide
@@ -30,11 +30,17 @@ document.addEventListener('DOMContentLoaded', function() {
       const li = document.createElement('li');
       li.className = item.checked ? 'checked' : '';
 
-      // Structure HTML : checkbox, texte, bouton supprimer
+      // Structure HTML avec checkbox personnalisée
       li.innerHTML = `
-        <input type="checkbox" class="check-btn" ${item.checked ? 'checked' : ''}>
+        <div class="custom-checkbox">
+          <input type="checkbox" id="check-${item.id}" class="check-btn" ${item.checked ? 'checked' : ''}>
+          <label for="check-${item.id}" class="checkbox-label">
+            <img src="../static/ico/check-box-outline-blank.svg" class="checkbox-unchecked" width="24" height="24">
+            <img src="../static/ico/check-box-outline-rounded.svg" class="checkbox-checked" width="24" height="24">
+          </label>
+        </div>
         <span class="item-text">${item.nom} (${item.quantite}) - ${item.categorie}</span>
-        <button class="delete-btn"><img src="../static/ico/cross.svg" width="28" height="28"></button>
+        <button class="delete-btn"><img src="../static/ico/cross.svg" width="24" height="24"></button>
       `;
 
       // Gestion suppression avec animation SYNCHRONISÉE
@@ -65,13 +71,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
       list.appendChild(li);
 
-      // Animation d'ajout SEULEMENT pour le dernier élément ET seulement si c'est un nouvel ajout
+      // Animation d'ajout CORRECTE pour le dernier élément
       if (isNewItem && index === courses.length - 1) {
-        li.classList.add('added');
-        setTimeout(() => li.classList.remove('added'), 500);
+        // Animation d'entrée : commence invisible puis apparaît
+        li.style.opacity = '0';
+        li.style.transform = 'translateY(-20px)';
+        
+        setTimeout(() => {
+          li.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+          li.style.opacity = '1';
+          li.style.transform = 'translateY(0)';
+        }, 50);
       }
-
-      console.log("item.id =", item.id);
     });
   }
 
@@ -81,41 +92,51 @@ document.addEventListener('DOMContentLoaded', function() {
     const nom = document.getElementById('nom').value;
     const quantite = document.getElementById('quantite').value;
     const categorie = document.getElementById('categorie').value;
+    
     await fetch('/api/courses', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ nom, quantite, categorie })
     });
+    
     this.reset();
-    fetchCourses(true, false); // <- Passe true pour déclencher l'animation d'ajout
+    fetchCourses(true, false); // Déclenche l'animation d'ajout
   };
 
   // Cocher/décocher
   async function checkItem(courseID) {
     await fetch(`/api/courses/${courseID}/check`, { method: 'POST' });
-    fetchCourses(false, false); // <- Pas d'animation
+    fetchCourses(false, false); // Pas d'animation conteneur
   }
 
-  // Suppression (simplifiée car l'animation est gérée dans le click)
+  // Suppression (animation gérée dans le click)
   async function deleteItem(courseID) {
     await fetch(`/api/courses/${courseID}`, { method: 'DELETE' });
-    fetchCourses(false, false); // <- Pas d'animation supplémentaire
+    fetchCourses(false, false); // Pas d'animation supplémentaire
   }
 
   // Vider la liste
   document.getElementById('clearBtn').onclick = async function() {
     const container = document.querySelector('.container-list');
+    const allItems = document.querySelectorAll('.liste-courses li');
     
-    // Animation spéciale pour vider complètement
+    // Animation de tous les éléments
+    allItems.forEach((item, index) => {
+      setTimeout(() => {
+        item.classList.add('removing');
+      }, index * 50); // Effet en cascade
+    });
+    
+    // Animation du conteneur
     container.classList.add('removing-item');
     
     setTimeout(async () => {
       await fetch('/api/courses/clear', { method: 'POST' });
       fetchCourses(false, false);
       container.classList.remove('removing-item');
-    }, 250);
+    }, 400);
   };
 
   // Initialisation
-  fetchCourses(false, false); // <- Pas d'animation au chargement
+  fetchCourses(false, false);
 });
