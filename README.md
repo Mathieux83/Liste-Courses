@@ -1,4 +1,4 @@
-# Liste de Courses - Version 3
+# Liste de Courses - Version 5-Beta
 
 Application web moderne pour gérer vos listes de courses avec fonctionnalités de partage avancées.
 
