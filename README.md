@@ -1,104 +1,200 @@
 # Liste de Courses - Version 3
 
-## Description
-Cette application web permet de gérer une liste de courses de manière simple et intuitive. Elle inclut des fonctionnalités d'authentification, de gestion des utilisateurs, et de manipulation des listes de courses (ajout, suppression, marquage comme fait, etc.).
+Application web moderne pour gérer vos listes de courses avec fonctionnalités de partage avancées.
 
-## Fonctionnalités principales
-- **Authentification** : Inscription, connexion et déconnexion des utilisateurs.
-- **Gestion des listes de courses** :
-  - Ajouter des articles avec nom, quantité et catégorie.
-  - Marquer les articles comme faits.
-  - Supprimer des articles ou vider toute la liste.
-- **Interface utilisateur moderne** : Design responsive et intuitif.
+## ✨ Fonctionnalités
 
-## Prérequis
-- Python 3.10 ou supérieur
-- Un environnement virtuel Python (recommandé)
-- SQLite (inclus par défaut avec Python)
+- ✅ **Gestion complète des articles** avec prix approximatifs
+- 📱 **Interface responsive** avec Tailwind CSS
+- 🔗 **Partage par lien direct** (lecture seule avec possibilité de cocher)
+- 📸 **Capture d'écran** de la liste
+- 📄 **Export PDF** formaté
+- 🖨️ **Impression** optimisée
+- 💰 **Calcul automatique** des totaux
+- 💾 **Sauvegarde automatique** en base de données
 
-## Installation
-1. Clonez ce dépôt :
-   ```bash
-   git clone <URL_DU_DEPOT>
-   cd Liste-Courses/v4
-   ```
+## 🛠️ Technologies
 
-2. Créez un environnement virtuel et activez-le :
-   ```bash
-   python -m venv env
-   # Sous Windows
-   .\env\Scripts\activate
-   # Sous macOS/Linux
-   source env/bin/activate
-   ```
+### Frontend
+- **React 18** - Framework JavaScript moderne
+- **Tailwind CSS** - Framework CSS utilitaire
+- **Vite** - Build tool rapide
+- **React Router** - Navigation
+- **Axios** - Client HTTP
+- **html2canvas** - Capture d'écran
+- **jsPDF** - Génération PDF
 
-3. Installez les dépendances :
-   ```bash
-   pip install -r requirements.txt
-   ```
+### Backend
+- **Node.js** - Runtime JavaScript
+- **Express** - Framework web
+- **SQLite** - Base de données
+- **CORS** - Gestion des requêtes cross-origin
+- **Helmet** - Sécurité
 
-4. Configurez les variables d'environnement :
-   - Créez un fichier `.env` à la racine du projet.
-   - Créez votre clé secrète :
-    ```
-    python -c "import secrets; print(secrets.token_hex(32))"
-    ```
-   - Ajoutez la clé secrète pour Flask :
-     ```env
-     SECRET_KEY=VotreCleSecreteIci
-     ```
+## 🚀 Installation
 
-**PAS NECESSAIRE DE L'INITIALISER CAR EN L'ENCANT L'APP CELA LE FAIT AUTOMATIQUEMENT**
-<!-- 5. Initialisez la base de données :
-   ```bash
-   python app.py
-   ```
-   Cela créera les tables nécessaires dans le fichier `shopping_list.db`. -->
+### Prérequis
+- Node.js 16+ 
+- npm ou yarn
 
-## Lancement de l'application
-1. Démarrez le serveur Flask :
-   ```bash
-   python app.py
-   ```
+### Backend
 
-2. Ouvrez votre navigateur et accédez à :
-   ```
-   http://127.0.0.1:5000
-   ```
+```
+cd backend
+npm install
+npm run dev
+```
 
-## Utilisation
-1. **Inscription** : Créez un compte en cliquant sur "S'inscrire".
-2. **Connexion** : Connectez-vous avec vos identifiants.
-3. **Gestion des articles** :
-   - Ajoutez des articles en remplissant le formulaire.
-   - Marquez les articles comme faits en cochant les cases.
-   - Supprimez des articles ou videz la liste.
 
-## Structure du projet
-- `app.py` : Fichier principal de l'application.
-- `db_manager.py` : Gestion de la base de données.
-- `static/` : Fichiers CSS, JavaScript et icônes.
-- `templates/` : Fichiers HTML pour les pages de l'application.
-- `shopping_list.db` : Base de données SQLite.
-- `requirements.txt` : Liste des dépendances Python.
+### Frontend
 
-## Déploiement en production
-Pour déployer en production, utilisez un serveur WSGI comme Gunicorn ou uWSGI avec un serveur web comme Nginx. Par exemple :
+```
+cd frontend
+npm install
+npm run dev
+```
 
-1. Installez Gunicorn :
-   ```bash
-   pip install gunicorn
-   ```
 
-2. Lancez l'application avec Gunicorn :
-   ```bash
-   gunicorn -w 4 -b 0.0.0.0:5000 app:app
-   ```
+## 📊 Structure de Base de Données
 
-3. Configurez Nginx pour servir l'application (voir la documentation officielle de Nginx).
+### Table `listes`
+- `id` - Identifiant unique
+- `nom` - Nom de la liste
+- `articles` - Articles au format JSON
+- `dateCreation` - Date de création
+- `dateModification` - Date de modification
+- `estPrincipale` - Indicateur liste principale
 
-## Contribution
-Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou ouvrir une issue pour signaler des bugs ou proposer des améliorations.
+### Table `tokens_partage`
+- `id` - Identifiant unique
+- `token` - Token de partage
+- `listeId` - Référence vers la liste
+- `dateCreation` - Date de création
+- `dateExpiration` - Date d'expiration
 
-## Licence
-Ce projet est sous licence MIT. Consultez le fichier `LICENSE` pour plus d'informations.
+## 🔧 Configuration
+
+### Variables d'environnement (backend)
+
+```
+PORT=3001
+FRONTEND_URL=http://localhost:3000
+NODE_ENV=development
+```
+
+
+### Ports par défaut
+- Frontend: `http://localhost:3000`
+- Backend: `http://localhost:3001`
+
+## 📡 API Endpoints
+
+### Listes
+- `GET /api/listes/principale` - Obtenir la liste principale
+- `POST /api/listes` - Créer/mettre à jour une liste
+- `POST /api/listes/:id/partage` - Générer un lien de partage
+- `GET /api/listes/partage/:token` - Obtenir une liste partagée
+- `GET /api/listes/:id/stats` - Statistiques de la liste
+
+## 🎨 Customisation
+
+### Couleurs Tailwind
+Les couleurs sont configurées dans `tailwind.config.js`:
+- `primary` - Couleur principale (bleu)
+- `success` - Succès (vert)
+- `warning` - Avertissement (jaune)
+- `danger` - Danger (rouge)
+
+### Styles d'impression
+Les styles d'impression sont définis dans `src/index.css` avec les classes:
+- `.no-print` - Masquer à l'impression
+- `.print-only` - Afficher uniquement à l'impression
+
+## 🔒 Sécurité
+
+- Limitation du taux de requêtes (100 req/15min)
+- Headers de sécurité avec Helmet
+- Validation des données entrantes
+- Tokens de partage avec expiration (30 jours)
+
+## 📱 Responsive Design
+
+L'application est optimisée pour:
+- 📱 Mobile (320px+)
+- 📲 Tablette (768px+)
+- 💻 Desktop (1024px+)
+
+## 🧪 Développement
+
+### Scripts disponibles
+
+**Frontend**
+
+```
+npm run dev # Serveur de développement
+npm run build # Build de production
+npm run preview # Aperçu du build
+```
+
+**Backend**
+
+```
+npm run dev # Serveur avec rechargement automatique
+npm start # Serveur de production
+```
+
+
+## 📈 Améliorations futures
+
+- [ ] Authentification utilisateur
+- [ ] Listes multiples
+- [ ] Catégories d'articles
+- [ ] Synchronisation temps réel
+- [ ] Mode hors ligne (PWA)
+- [ ] Notifications push
+- [ ] Intégration avec des services de livraison
+
+## 🤝 Contribution
+
+1. Fork le projet
+2. Créer une branche feature (`git checkout -b feature/AmazingFeature`)
+3. Commit les changements (`git commit -m 'Add AmazingFeature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrir une Pull Request
+
+## 📄 Licence
+
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+
+## 🆘 Support
+
+En cas de problème, vérifiez:
+1. Node.js version 16+
+2. Ports 3000 et 3001 disponibles
+3. Permissions d'écriture pour la base de données SQLite
+
+Pour plus d'aide, créez une issue sur GitHub.
+
+___
+
+# 🎯 Instructions de Démarrage Rapide
+
+# Cloner le repository
+git clone <votre-repo>
+cd liste-courses-v5
+
+# Installer les dépendances backend
+cd backend
+npm install
+
+# Installer les dépendances frontend
+cd ../frontend
+npm install
+
+# Démarrer le backend (terminal 1)
+cd ../backend
+npm run dev
+
+# Démarrer le frontend (terminal 2)
+cd ../frontend
+npm run dev

@@ -1,0 +1,118 @@
+/* Thème pour les composants spécifiques */
+
+/* ListeCourses */
+.liste-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.liste-header {
+  margin-bottom: 2rem;
+}
+
+.liste-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+/* ModalPartage */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  max-width: 500px;
+  width: 90%;
+}
+
+/* DeliveryOptions */
+.delivery-card {
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.delivery-card:hover {
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+}
+
+.delivery-card.selected {
+  border-color: var(--primary-color);
+  background-color: rgba(79, 70, 229, 0.1);
+}
+
+/* Transitions et animations */
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms ease-in;
+}
+
+/* Loading states */
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .liste-container {
+    padding: 0.5rem;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 1rem;
+  }
+}
+
+/* Validations et états de formulaire */
+.form-error {
+  color: var(--danger-color);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.input-error {
+  border-color: var(--danger-color) !important;
+}
+
+.input-success {
+  border-color: var(--success-color) !important;
+}
