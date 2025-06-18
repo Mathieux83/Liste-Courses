@@ -1,4 +1,4 @@
-# Liste de Courses - Version 4
+# Liste de Courses - Version 3
 
 ## Description
 Cette application web permet de gérer une liste de courses de manière simple et intuitive. Elle inclut des fonctionnalités d'authentification, de gestion des utilisateurs, et de manipulation des listes de courses (ajout, suppression, marquage comme fait, etc.).
