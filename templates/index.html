@@ -4,11 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>Liste de Courses v2.1</title>
+    <title>Liste de Courses v3.0</title>
 </head>
 <body>
     <div class="background"></div>
-    <h1>Liste de Courses</h1>
+    
+    <!-- Header avec informations utilisateur -->
+    <div class="user-header">
+        <h1>Liste de Courses</h1>
+        <div class="user-info">
+            <span class="welcome-text">Bienvenue, {{ username }}</span>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Déconnexion</a>
+        </div>
+    </div>
     
     <div class="container-general">
         <form class="formulaire-course" method="POST">
