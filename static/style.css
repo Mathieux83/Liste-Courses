@@ -1,0 +1,298 @@
+:root {
+  --primary: #233045;
+  --secondary: rgba(63, 58, 58, 0.562);
+  --accent: #7fd7ff;
+  --success: #4fd1c5;
+  --danger: #ff6b81;
+  --border: rgba(180, 200, 255, 0.25);
+  --radius: 14px;
+  --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+  --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  --font-main: 'Inter', Arial, sans-serif;
+  --font-color: #black;
+  --size: 20px;
+}
+
+/* Reset et base */
+
+body {
+  background: #3b4252;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: #000000;
+  margin: 0;
+  padding: 0;
+  text-transform: capitalize;
+  color: var(--font-color);
+}
+
+h1 {
+  display: flex;
+  justify-content: center;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 1rem;
+  color: black;
+
+}
+
+.container-general {
+  background: none;
+  border-radius: 15px;
+  padding: 35px 30px;
+  margin: auto;
+  max-width: 420px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 10px;
+  /* margin-top: -1rem; */
+  margin-bottom: 16px;
+  font-weight:500;
+
+}
+
+.form-nom {
+  grid-column: 1 / 3; /* Prend toute la largeur */
+  grid-row: 1;
+  margin-right: 1.3rem;
+}
+
+.form-quantite {
+  grid-column: 1;
+  grid-row: 2;
+  margin-right: 2rem;
+}
+
+.form-categorie {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/* Style des champs */
+
+label, select, input[type="text"], input[type="number"] {
+  display: block;
+  width: 100%;
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+input[type="text"], input[type="number"], select {
+  border: 1px solid #d1d8e0;
+  border-radius: 6px;
+  padding: 10px;
+  background: #fafbfc;
+  transition: border 0.2s;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, select:focus {
+  border: 1.5px solid #009e5f;
+  outline: none;
+}
+
+/* Couleur du texte du select quand aucune option n'est sélectionnée */
+select:required:invalid {
+  color: #737374; /* même couleur que tes placeholders */
+}
+
+/* Couleur des options normales */
+select option {
+  color: var(--font-color); /* couleur normale du texte */
+}
+
+/* Masquer le placeholder dans la liste déroulante */
+select option[value=""][disabled] {
+  display: none;
+}
+
+/* Bouton principal */
+.ajouter-btn {
+  width: 100%;
+  background: black;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 14px 0;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ajouter-btn:hover {
+  background: grey;
+}
+
+h2 {
+  display: flex;
+  justify-content: left;
+  font-weight: 600;
+  /* margin-top: -5%;
+  padding-right: 10%; */
+  text-transform: none;
+  font-size: 1.3rem;
+}
+
+.container-list {
+  background: #eeee;
+  border-radius: 15px;
+  border: 2px solid black;
+  display: relative;
+  border-radius: 12px;
+  padding: 32px 24px;
+  padding-top: 1;
+  padding-bottom: 24px; /* Valeur de base */
+  margin-top: 2rem;
+  transform: scale(1);
+  opacity: 1;
+  transition: transform 0.5s ease, opacity 0.5s ease, box-shadow 0.5s ease, padding-bottom 0.5s ease;
+}
+
+/* Animation du conteneur lors de l'ajout d'un élément */
+.container-list.adding {
+  transform: scale(1.02);
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.25);
+  padding-bottom: 48px; /* Extension plus importante */
+  transition: transform 0.6s ease, box-shadow 0.6s ease, padding-bottom 0.6s ease;
+}
+
+/* Animation du conteneur lors de la suppression d'un élément */
+.container-list.removing-item {
+  transform: scale(0.98);
+  opacity: 0.95;
+  padding-bottom: 8px; /* Contraction plus importante */
+  transition: transform 0.6s ease, opacity 0.6s ease, padding-bottom 0.6s ease;
+}
+
+/* Animation du conteneur quand il devient vide */
+.container-list.empty {
+  transform: scale(0.95);
+  opacity: 0.8;
+  padding-bottom: 12px; /* Padding minimal quand vide */
+  transition: transform 0.4s ease, opacity 0.4s ease, padding-bottom 0.4s ease;
+}
+
+
+.header-list {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -1rem;
+}
+
+.btn-clear {
+  transform: translateY(1.3px);
+}
+
+/* Liste de courses */
+
+.liste-courses li.removing {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+
+.liste-courses li.added {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+
+.liste-courses li {
+  display: flex;
+  align-items: center; /* Centre verticalement tous les enfants */
+  justify-content: space-between;
+  border-radius: 10px;
+  border-top: 1px solid black;
+  margin-bottom: 10px;
+  margin-left: -4rem;
+  margin-right: -1.5rem;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: -1rem;
+  background: none;
+  min-height: 48px; /* Ajoute une hauteur minimale pour un meilleur centrage */
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s, transform all 0.5s;
+}
+
+.liste-courses input[type="checkbox"] {
+  margin-right: 12px;
+  vertical-align: middle; /* Assure le centrage de la checkbox  */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  transition: all 0.5s;
+}
+
+.liste-courses li.checked .item-text {
+  text-decoration: line-through;
+  color: #888;
+  transition: color 0.3s, text-decoration 0.3s;
+}
+
+ .liste-courses span {
+  flex: 1;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  line-height: 1.6;
+  min-height: 28px; /* Ajuste si besoin selon la taille de la checkbox */
+  font-size: 18px;
+} 
+
+.liste-courses .delete-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 12px;
+  transform: translateY(3.5px);
+}
+
+/* Bouton "Vider la liste" */
+.btn-clear {
+  color: #bf616a;
+  background: transparent;
+  border: none;
+  outline: none;
+  /* border: 1px solid black; */
+  cursor: pointer;
+  /* float: right; */
+  font-size: 1.1rem;
+  /* margin-top: -10%; */
+  /* margin-bottom: 12px; */
+  transition: color 0.2s;
+  /* margin-top: -32px;
+  padding-left: 10%; */
+  
+}
+
+
+
+
+
+
+
+/* Responsive */
+/* @media (max-width: 700px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+  .form-nom, .form-quantite, .form-categorie {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+  }
+  .container-list {
+    padding: 1rem;
+  }
+} */
