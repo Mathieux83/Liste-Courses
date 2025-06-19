@@ -1,8 +1,18 @@
 import express from 'express'
 import { listeController } from '../controllers/listeController.js'
 import auth from '../middleware/auth.js'
+import { createOrUpdateListeValidation, idParamValidation } from '../middleware/listeValidation.js'
+import { validationResult } from 'express-validator'
 
 const router = express.Router()
+
+const handleValidation = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json[{ errors: errors.array() }]
+  }
+  next();
+}
 
 // Routes protégées par authentification
 router.use(auth)
@@ -30,6 +40,18 @@ router.post('/:id/partage', listeController.genererTokenPartage)
 
 // Obtenir une liste partagée (pas besoin d'authentification)
 router.get('/partage/:token', listeController.obtenirPartagee)
+
+router.post('/',
+  createOrUpdateListeValidation,
+  handleValidation,
+  listeController.creerListe
+);
+
+router.get('/:id',
+  idParamValidation,
+  handleValidation,
+  listeController.getListe
+);
 
 // Mettre à jour un article dans une liste partagée
 router.patch('/partage/:token/articles/:articleId', async (req, res) => {

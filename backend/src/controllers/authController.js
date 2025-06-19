@@ -1,9 +1,8 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import { validationResult } from 'express-validator';
-import bcrypt from 'bcryptjs';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'votre_secret_jwt';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export const register= async (req, res) => {
   try {
@@ -20,13 +19,10 @@ export const register= async (req, res) => {
       return res.status(400).json({ message: 'Cet utilisateur existe déjà' });
     }
 
-    // Hash du mot de passe
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     // Créer un nouvel utilisateur
     user = new User({
       email,
-      password: hashedPassword,
+      password,
       name
     });
 
@@ -62,6 +58,9 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
 
+    // console.log('Tentative de connexion pour:', email);
+    // console.log('Utilisateur trouvé:', user ? user.email : null);
+
     // Vérifier le mot de passe
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
@@ -74,9 +73,14 @@ export const login = async (req, res) => {
       JWT_SECRET,
       { expiresIn: '24h' }
     );
-
+    
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000
+    });
     res.json({
-      token,
       user: {
         id: user._id,
         email: user.email,
@@ -86,6 +90,8 @@ export const login = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Erreur serveur' });
   }
+
+  
 };
 
 export const getMe = async (req, res) => {
@@ -95,4 +101,13 @@ export const getMe = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Erreur serveur' });
   }
+};
+
+export const logout = (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
+  });
+  res.json({ message: 'Déconnexion réussie' });
 };

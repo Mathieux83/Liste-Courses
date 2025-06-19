@@ -1,4 +1,4 @@
-import { saveSubscription, sendPushNotification, subscriptions } from '../services/pushNotifications.js';
+import { saveSubscription, sendPushNotification } from '../services/pushNotifications.js';
 
 export const notificationsController = {
   // Enregistrer un nouvel abonnement aux notifications
@@ -19,7 +19,7 @@ export const notificationsController = {
   async notify(req, res) {
     try {
       const { userId, notification } = req.body;
-      const subscription = subscriptions.get(userId);
+      const subscription = await getSubscription(userId);
 
       if (!subscription) {
         return res.status(404).json({ error: 'Abonnement non trouvé' });

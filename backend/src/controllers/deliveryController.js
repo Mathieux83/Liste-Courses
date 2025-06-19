@@ -6,10 +6,6 @@ export const deliveryController = {
   async getAvailableServices(req, res) {
     try {
       const { postalCode } = req.query;
-      if (!postalCode) {
-        return res.status(400).json({ error: 'Code postal requis' });
-      }
-
       const services = await deliveryService.getAvailableServices(postalCode);
       res.json(services);
     } catch (error) {
@@ -24,7 +20,7 @@ export const deliveryController = {
       const { listeId, serviceId, store } = req.body;
       
       // Vérifier que la liste existe et appartient à l'utilisateur
-      const liste = await Liste.obtenirParId(listeId, req.user.id);
+      const liste = await Liste.obtenirParId(listeId, req.user.userId); // Correction: req.user.userId au lieu de req.user.id
       if (!liste) {
         return res.status(404).json({ error: 'Liste non trouvée' });
       }
@@ -37,6 +33,7 @@ export const deliveryController = {
 
       // Enregistrer la commande dans la base de données
       const savedOrder = await Liste.sauvegarderCommande(listeId, {
+        utilisateurId: req.user.userId, // Ajouter l'utilisateurId
         serviceId,
         orderId: order.orderId,
         store,
@@ -55,7 +52,7 @@ export const deliveryController = {
   async getOrderStatus(req, res) {
     try {
       const { orderId } = req.params;
-      const order = await Liste.obtenirCommande(orderId, req.user.id);
+      const order = await Liste.obtenirCommande(orderId, req.user.userId); // Correction: req.user.userId
       
       if (!order) {
         return res.status(404).json({ error: 'Commande non trouvée' });
@@ -72,7 +69,7 @@ export const deliveryController = {
   async cancelOrder(req, res) {
     try {
       const { orderId } = req.params;
-      const order = await Liste.obtenirCommande(orderId, req.user.id);
+      const order = await Liste.obtenirCommande(orderId, req.user.userId); // Correction: req.user.userId
       
       if (!order) {
         return res.status(404).json({ error: 'Commande non trouvée' });

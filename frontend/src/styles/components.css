@@ -1,58 +1,284 @@
-/* Thème pour les composants spécifiques */
+/* Thème pour les composants spécifiques - Règle 60-30-10 */
 
-/* ListeCourses */
+/* ListeCourses - Application cohérente des couleurs */
 .liste-container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 2rem;
+  background-color: var(--primary-color); /* 60% */
+  min-height: 100vh;
 }
 
 .liste-header {
   margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: var(--primary-light); /* 60% variation */
+  border-radius: 0.5rem;
+  border: 1px solid var(--secondary-color); /* 30% */
 }
 
 .liste-title {
-  font-size: 1.875rem;
-  font-weight: bold;
-  color: var(--primary-color);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--secondary-color); /* 30% pour les titres */
+  text-align: center;
+  margin-bottom: 0.5rem;
 }
 
-/* ModalPartage */
+.add-item-form {
+  background-color: var(--primary-light); /* 60% variation */
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--secondary-color); /* 30% */
+  margin-bottom: 2rem;
+}
+
+.delete-btn {
+  background-color: var(--accent-color); /* 10% */
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.delete-btn:hover {
+  background-color: #a54a56;
+  transform: translateY(-1px);
+}
+
+/* ModalPartage - Application 60-30-10 */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(46, 52, 64, 0.8); /* 60% avec transparence */
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 50;
+  animation: fadeIn 0.3s ease;
 }
 
 .modal-content {
-  background-color: white;
+  background-color: var(--primary-light); /* 60% variation */
   padding: 2rem;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   max-width: 500px;
   width: 90%;
+  border: 2px solid var(--secondary-color); /* 30% */
+  box-shadow: 0 20px 50px rgba(136, 192, 208, 0.2);
+  animation: slideIn 0.3s ease;
 }
 
-/* DeliveryOptions */
+.modal-title {
+  color: var(--secondary-color); /* 30% */
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.share-buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.share-btn {
+  background-color: var(--accent-color); /* 10% */
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 120px;
+}
+
+.share-btn:hover {
+  background-color: var(--warning-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(191, 97, 106, 0.3);
+}
+
+.share-link-input {
+  background-color: var(--primary-color); /* 60% */
+  border: 2px solid var(--secondary-color); /* 30% */
+  color: var(--text-light);
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  width: 100%;
+  margin: 1rem 0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+}
+
+/* DeliveryOptions - Cohérence avec le thème */
 .delivery-card {
+  background-color: var(--primary-light); /* 60% variation */
   border: 2px solid transparent;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .delivery-card:hover {
-  border-color: var(--primary-color);
+  border-color: var(--secondary-color); /* 30% */
   transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(136, 192, 208, 0.15);
 }
 
 .delivery-card.selected {
-  border-color: var(--primary-color);
-  background-color: rgba(79, 70, 229, 0.1);
+  border-color: var(--accent-color); /* 10% */
+  background-color: rgba(191, 97, 106, 0.1);
+  box-shadow: 0 0 0 3px rgba(191, 97, 106, 0.2);
+}
+
+.delivery-service-name {
+  color: var(--secondary-color); /* 30% */
+  font-weight: 600;
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+}
+
+.delivery-service-price {
+  color: var(--accent-color); /* 10% */
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+/* ListesAccueil - Grille et navigation */
+.listes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem 0;
+}
+
+.liste-card {
+  background-color: var(--primary-light); /* 60% variation */
+  border: 1px solid var(--secondary-color); /* 30% */
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.liste-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-color); /* 10% au hover */
+  box-shadow: 0 8px 25px rgba(136, 192, 208, 0.15);
+}
+
+.liste-card-title {
+  color: var(--secondary-color); /* 30% */
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.liste-card-meta {
+  color: rgba(236, 239, 244, 0.7);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+/* Formulaires d'authentification */
+
+.pastille-hover {
+  transition: all 0.7s ease;
+  border: 1.5px solid rgba(236, 239, 244, 0.7);
+  
+}
+
+.pastille-hover:hover {
+  background-color: var(--accent-color);
+  transform: scale(1.2);
+  border: 1.5px solid rgba(236, 239, 244, 0.7);
+  box-shadow: 0px 0px 35px rgba(136, 192, 208, 0.15);
+  transition: ease all 0.7s;
+}
+
+
+
+/* Container d'authentification */
+.auth-container {
+  background-color: var(--primary-light); /* 60% variation */
+  border: 1px solid var(--secondary-color); /* 30% */
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(136, 192, 208, 0.1);
+}
+
+/* Titre d'authentification */
+.auth-title {
+  color: var(--secondary-color); /* 30% */
+  font-size: 1.75rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Input d'authentification */
+.auth-input {
+  background-color: var(--primary-color); /* 60% */
+  border: 2px solid var(--secondary-color); /* 30% */
+  color: var(--text-light);
+  padding: 0.875rem;
+  border-radius: 0.375rem;
+  width: 100%;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  padding-left: 3rem;
+}
+
+.auth-input:focus {
+  border-color: var(--secondary-light);
+  box-shadow: 0px 0px 20px rgba(136, 192, 208, 0.3);
+  outline: none;
+}
+
+.auth-input::placeholder {
+  color: rgba(236, 239, 244, 0.5);
+}
+
+.auth-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Messages d'erreur */
+.form-error {
+  color: var(--accent-color);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.form-success {
+  color: var(--success-color);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Animations pour les critères de mot de passe */
+.password-criterion {
+  transition: all 0.2s ease;
+}
+
+.password-criterion.met {
+  color: var(--success-color);
+}
+
+.password-criterion.not-met {
+  color: var(--accent-color);
 }
 
 /* Transitions et animations */
@@ -74,11 +300,80 @@
   transition: opacity 300ms ease-in;
 }
 
-/* Loading states */
+
+/* Styles spécifiques pour ListePartage */
+/* .liste-partagee-container {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.shared-list-indicator {
+  background-color: rgba(136, 192, 208, 0.1);
+  border: 1px solid var(--secondary-color);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.sync-indicator {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  color: rgba(236, 239, 244, 0.6);
+}
+
+.progress-bar-container {
+  background-color: var(--primary-color);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 0.75rem;
+  border-radius: 9999px;
+  transition: width 0.5s ease-in-out;
+  background: linear-gradient(90deg, var(--secondary-color), var(--secondary-light));
+}
+
+.progress-bar.complete {
+  background: linear-gradient(90deg, var(--success-color), #c3d82c);
+} */
+
+/* Animation pour les éléments cochés */
+/* .liste-item-checked .liste-item-text {
+  transition: all 0.3s ease;
+} */
+
+/* État de mise à jour en cours */
+/* .updating {
+  opacity: 0.7;
+  pointer-events: none;
+} */
+
+/* Responsive pour les listes partagées */
+/* @media (max-width: 640px) {
+  .liste-partagee-container {
+    padding: 0.5rem;
+  }
+  
+  .shared-list-indicator {
+    padding: 0.75rem;
+  }
+  
+  .grid.grid-cols-1.md\\:grid-cols-3 {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+ */
+
+/* Loading states avec thème */
 .loading-skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, var(--primary-color) 25%, var(--primary-light) 50%, var(--primary-color) 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
+  border-radius: 0.25rem;
+  height: 1rem;
 }
 
 @keyframes loading {
@@ -90,29 +385,65 @@
   }
 }
 
-/* Responsive design */
-@media (max-width: 640px) {
-  .liste-container {
-    padding: 0.5rem;
-  }
-
-  .modal-content {
-    width: 95%;
-    padding: 1rem;
-  }
-}
-
-/* Validations et états de formulaire */
+/* États d'erreur et succès */
 .form-error {
-  color: var(--danger-color);
+  color: var(--accent-color);
   font-size: 0.875rem;
   margin-top: 0.25rem;
+  font-weight: 500;
 }
 
+.form-success {
+  color: var(--success-color);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+/* États d'erreur et succès pour les inputs */
 .input-error {
-  border-color: var(--danger-color) !important;
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 0 0 3px rgba(191, 97, 106, 0.2) !important;
 }
 
 .input-success {
   border-color: var(--success-color) !important;
+  box-shadow: 0 0 0 3px rgba(163, 190, 140, 0.2) !important;
 }
+
+/* Responsive pour l'authentification */
+@media (max-width: 640px) {
+  .auth-container {
+    margin: 1rem;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+  }
+  
+  .auth-title {
+    font-size: 1.5rem;
+  }
+  
+  .auth-input {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 1rem;
+  }
+}
+
+/* @media (max-width: 480px) {
+  .liste-title {
+    font-size: 1.5rem;
+  }
+  
+  .modal-content {
+    padding: 1rem;
+  }
+  
+  .delivery-card {
+    padding: 1rem;
+  }
+} */

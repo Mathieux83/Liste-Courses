@@ -14,14 +14,18 @@ import { initializeDatabase } from './models/Liste.js'
 import { initializeSocketIO } from './socket.js'
 import User from './models/User.js'
 import mongoose from 'mongoose'
+import cookieParser from 'cookie-parser'
 
 // Configuration
 dotenv.config()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
+
+
 const app = express()
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
+app.use(cookieParser())
 
 // Middleware de sécurité
 app.use(helmet({
@@ -101,10 +105,8 @@ const startServer = () => {
   console.log('✨ Socket.IO initialisé')
 }
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+mongoose.connect(process.env.MONGODB_URI)
+
 .then(() => {
   console.log('✅ Connexion à MongoDB établie')
   startServer() // Démarre le serveur SEULEMENT si MongoDB est OK

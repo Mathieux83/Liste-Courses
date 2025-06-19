@@ -1,345 +1,486 @@
-import sqlite3 from 'sqlite3'
+// Passage a mangooseDB 
+// Need to refactor alle the code for mergin to sqlite3 to mongooseDB
+// Help me !!
+
+
+// import sqlite3 from 'sqlite3' 
 import mongoose from 'mongoose'
-import { fileURLToPath } from 'url'
-import { dirname, join } from 'path'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+// Schéma pour les articles
+const articleSchema = new mongoose.Schema({
+  id: Number,
+  nom: { type: String, required: true },
+  quantite: { type: Number, default: 1 },
+  unite: String,
+  checked: { type: Boolean, default: false },
+  montant: { type: Number, default: 0 },
+  categorie: String
+}, { _id: false });
 
-// Chemin vers la base de données
-const dbPath = join(__dirname, '../../database.sqlite')
-
-// Créer la connexion à la base de données
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) {
-    console.error('Erreur lors de la connexion à la base de données:', err.message)
-  } else {
-    console.log('✅ Connexion à SQLite établie')
+// Schéma pour les listes
+const listeSchema = new mongoose.Schema({
+  nom: {
+    type: String,
+    required: true
+  },
+  articles: [articleSchema],
+  utilisateurId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  estPrincipale: {
+    type: Boolean,
+    default: false
+  },
+  dateCreation: {
+    type: Date,
+    default: Date.now
+  },
+  dateModification: {
+    type: Date,
+    default: Date.now
   }
-})
+});
 
-// Initialiser la base de données
-export const initializeDatabase = () => {
-  return new Promise((resolve, reject) => {
-    db.serialize(() => {
-      // Table des utilisateurs
-      db.run(`
-        CREATE TABLE IF NOT EXISTS utilisateurs (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          nom TEXT NOT NULL,
-          email TEXT UNIQUE NOT NULL,
-          password TEXT NOT NULL,
-          dateCreation DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-      `, (err) => {
-        if (err) {
-          console.error('Erreur lors de la création de la table utilisateurs:', err)
-          reject(err)
-        }
-      })
+// Middleware pour mettre à jour la date de modification
+listeSchema.pre('save', function(next) {
+  this.dateModification = new Date();
+  next();
+});
 
-      // Table des listes
-      db.run(`
-        CREATE TABLE IF NOT EXISTS listes (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          nom TEXT NOT NULL,
-          articles TEXT NOT NULL,
-          utilisateurId INTEGER NOT NULL,
-          dateCreation DATETIME DEFAULT CURRENT_TIMESTAMP,
-          dateModification DATETIME DEFAULT CURRENT_TIMESTAMP,
-          estPrincipale BOOLEAN DEFAULT 0,
-          FOREIGN KEY (utilisateurId) REFERENCES utilisateurs (id) ON DELETE CASCADE
-        )
-      `, (err) => {
-        if (err) {
-          console.error('Erreur lors de la création de la table listes:', err)
-          reject(err)
-        }
-      })
+listeSchema.pre('findOneAndUpdate', function(next) {
+  this.set({ dateModification: new Date() });
+  next();
+});
 
-      // Table des tokens de partage
-      db.run(`
-        CREATE TABLE IF NOT EXISTS tokens_partage (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          token TEXT UNIQUE NOT NULL,
-          listeId INTEGER NOT NULL,
-          dateCreation DATETIME DEFAULT CURRENT_TIMESTAMP,
-          dateExpiration DATETIME,
-          FOREIGN KEY (listeId) REFERENCES listes (id) ON DELETE CASCADE
-        )
-      `, (err) => {
-        if (err) {
-          console.error('Erreur lors de la création de la table tokens_partage:', err)
-          reject(err)
-        } else {
-          resolve()
-        }
-      })
-    })
-  })
-}
+const ListeModel = mongoose.model('Liste', listeSchema);
 
-// Modèle Liste
+// Schéma pour les tokens de partage
+const tokenPartageSchema = new mongoose.Schema({
+  token: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  listeId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Liste',
+    required: true
+  },
+  dateCreation: {
+    type: Date,
+    default: Date.now
+  },
+  dateExpiration: {
+    type: Date,
+    default: () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 jours
+  }
+});
+
+const TokenPartageModel = mongoose.model('TokenPartage', tokenPartageSchema);
+
+// Schéma pour les commandes de livraison
+const commandeSchema = new mongoose.Schema({
+  listeId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Liste',
+    required: true
+  },
+  utilisateurId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  serviceId: {
+    type: String,
+    required: true
+  },
+  orderId: {
+    type: String,
+    required: true
+  },
+  store: String,
+  status: {
+    type: String,
+    enum: ['created', 'processing', 'ready', 'delivered', 'cancelled'],
+    default: 'created'
+  },
+  estimatedDelivery: Date,
+  dateCreation: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const CommandeModel = mongoose.model('Commande', commandeSchema);
+
+// Modèle Liste avec les méthodes adaptées à MongoDB
 export const Liste = {
   // Créer ou mettre à jour la liste principale
   async sauvegarderPrincipale(nom, articles, utilisateurId) {
-    return new Promise((resolve, reject) => {
-      const articlesJson = JSON.stringify(articles)
-      
+    try {
       // Vérifier si une liste principale existe pour cet utilisateur
-      db.get(
-        'SELECT id FROM listes WHERE estPrincipale = 1 AND utilisateurId = ?',
-        [utilisateurId],
-        (err, row) => {
-          if (err) {
-            reject(err)
-            return
-          }
-          
-          if (row) {
-            // Mettre à jour la liste existante
-            db.run(
-              'UPDATE listes SET nom = ?, articles = ?, dateModification = CURRENT_TIMESTAMP WHERE id = ?',
-              [nom, articlesJson, row.id],
-              function(err) {
-                if (err) {
-                  reject(err)
-                } else {
-                  resolve({ id: row.id, nom, articles })
-                }
-              }
-            )
-          } else {            // Créer une nouvelle liste principale
-            db.run(
-              'INSERT INTO listes (nom, articles, utilisateurId, estPrincipale) VALUES (?, ?, ?, 1)',
-              [nom, articlesJson, utilisateurId],
-              function(err) {
-                if (err) {
-                  reject(err)
-                } else {
-                  resolve({ id: this.lastID, nom, articles })
-                }
-              }
-            )
-          }
-        }
-      )
-    })
+      let liste = await ListeModel.findOne({ 
+        estPrincipale: true, 
+        utilisateurId: new mongoose.Types.ObjectId(utilisateurId) 
+      });
+      
+      if (liste) {
+        // Mettre à jour la liste existante
+        liste.nom = nom;
+        liste.articles = articles;
+        await liste.save();
+        
+        return {
+          id: liste._id,
+          nom: liste.nom,
+          articles: liste.articles,
+          dateModification: liste.dateModification
+        };
+      } else {
+        // Créer une nouvelle liste principale
+        liste = new ListeModel({
+          nom,
+          articles,
+          utilisateurId: new mongoose.Types.ObjectId(utilisateurId),
+          estPrincipale: true
+        });
+        
+        await liste.save();
+        
+        return {
+          id: liste._id,
+          nom: liste.nom,
+          articles: liste.articles,
+          dateCreation: liste.dateCreation,
+          dateModification: liste.dateModification
+        };
+      }
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde principale:', error);
+      throw error;
+    }
   },
 
   // Obtenir la liste principale
-  async obtenirPrincipale() {
-    return new Promise((resolve, reject) => {
-      db.get(
-        'SELECT * FROM listes WHERE estPrincipale = 1',
-        (err, row) => {
-          if (err) {
-            reject(err)
-          } else if (row) {
-            resolve({
-              id: row.id,
-              nom: row.nom,
-              articles: JSON.parse(row.articles),
-              dateCreation: row.dateCreation,
-              dateModification: row.dateModification
-            })
-          } else {
-            resolve(null)
-          }
-        }
-      )
-    })
+  async obtenirPrincipale(utilisateurId) {
+    try {
+      const liste = await ListeModel.findOne({ 
+        estPrincipale: true,
+        utilisateurId: new mongoose.Types.ObjectId(utilisateurId)
+      });
+      
+      if (!liste) {
+        return null;
+      }
+      
+      return {
+        id: liste._id,
+        nom: liste.nom,
+        articles: liste.articles,
+        utilisateurId: liste.utilisateurId,
+        dateCreation: liste.dateCreation,
+        dateModification: liste.dateModification,
+        estPrincipale: liste.estPrincipale
+      };
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la liste principale:', error);
+      throw error;
+    }
   },
+
   // Obtenir une liste par ID
   async obtenirParId(id, utilisateurId) {
-    return new Promise((resolve, reject) => {
-      db.get(
-        'SELECT * FROM listes WHERE id = ? AND utilisateurId = ?',
-        [id, utilisateurId],
-        (err, row) => {
-          if (err) {
-            reject(err)
-          } else if (row) {
-            resolve({
-              id: row.id,
-              nom: row.nom,
-              articles: JSON.parse(row.articles),
-              utilisateurId: row.utilisateurId,
-              dateCreation: row.dateCreation,
-              dateModification: row.dateModification,
-              estPrincipale: Boolean(row.estPrincipale)
-            })
-          } else {
-            resolve(null)
-          }
-        }
-      )
-    })
+    try {
+      const liste = await ListeModel.findOne({ 
+        _id: new mongoose.Types.ObjectId(id),
+        utilisateurId: new mongoose.Types.ObjectId(utilisateurId)
+      });
+      
+      if (!liste) {
+        return null;
+      }
+      
+      return {
+        id: liste._id,
+        nom: liste.nom,
+        articles: liste.articles,
+        utilisateurId: liste.utilisateurId,
+        dateCreation: liste.dateCreation,
+        dateModification: liste.dateModification,
+        estPrincipale: liste.estPrincipale
+      };
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la liste:', error);
+      throw error;
+    }
   },
 
   // Récupérer toutes les listes d'un utilisateur
   async getListesUtilisateur(utilisateurId) {
-    return new Promise((resolve, reject) => {
-      db.all(
-        'SELECT * FROM listes WHERE utilisateurId = ? ORDER BY dateModification DESC',
-        [utilisateurId],
-        (err, rows) => {
-          if (err) {
-            reject(err)
-          } else {
-            resolve(rows.map(row => ({
-              id: row.id,
-              nom: row.nom,
-              articles: JSON.parse(row.articles),
-              utilisateurId: row.utilisateurId,
-              dateCreation: row.dateCreation,
-              dateModification: row.dateModification,
-              estPrincipale: Boolean(row.estPrincipale)
-            })))
-          }
-        }
-      )
-    })
+    try {
+      const listes = await ListeModel.find({ 
+        utilisateurId: new mongoose.Types.ObjectId(utilisateurId) 
+      }).sort({ dateModification: -1 });
+      
+      return listes.map(liste => ({
+        id: liste._id,
+        nom: liste.nom,
+        articles: liste.articles,
+        utilisateurId: liste.utilisateurId,
+        dateCreation: liste.dateCreation,
+        dateModification: liste.dateModification,
+        estPrincipale: liste.estPrincipale
+      }));
+    } catch (error) {
+      console.error('Erreur lors de la récupération des listes:', error);
+      throw error;
+    }
   },
 
   // Créer une nouvelle liste
   async creerListe(nom, articles, utilisateurId) {
-    return new Promise((resolve, reject) => {
-      const articlesJson = JSON.stringify(articles)
-      db.run(
-        'INSERT INTO listes (nom, articles, utilisateurId, estPrincipale) VALUES (?, ?, ?, 0)',
-        [nom, articlesJson, utilisateurId],
-        function(err) {
-          if (err) {
-            reject(err)
-          } else {
-            resolve({
-              id: this.lastID,
-              nom,
-              articles,
-              utilisateurId,
-              estPrincipale: false,
-              dateCreation: new Date().toISOString(),
-              dateModification: new Date().toISOString()
-            })
-          }
-        }
-      )
-    })
+    try {
+      const liste = new ListeModel({
+        nom,
+        articles,
+        utilisateurId: new mongoose.Types.ObjectId(utilisateurId),
+        estPrincipale: false
+      });
+      
+      await liste.save();
+      
+      return {
+        id: liste._id,
+        nom: liste.nom,
+        articles: liste.articles,
+        utilisateurId: liste.utilisateurId,
+        estPrincipale: liste.estPrincipale,
+        dateCreation: liste.dateCreation,
+        dateModification: liste.dateModification
+      };
+    } catch (error) {
+      console.error('Erreur lors de la création de la liste:', error);
+      throw error;
+    }
   },
 
   // Mettre à jour une liste
   async mettreAJourListe(id, nom, articles, utilisateurId) {
-    return new Promise((resolve, reject) => {
-      const articlesJson = JSON.stringify(articles)
-      db.run(
-        'UPDATE listes SET nom = ?, articles = ?, dateModification = CURRENT_TIMESTAMP WHERE id = ? AND utilisateurId = ?',
-        [nom, articlesJson, id, utilisateurId],
-        function(err) {
-          if (err) {
-            reject(err)
-          } else {
-            if (this.changes === 0) {
-              reject(new Error('Liste non trouvée ou non autorisée'))
-            } else {
-              resolve({
-                id,
-                nom,
-                articles,
-                utilisateurId,
-                dateModification: new Date().toISOString()
-              })
-            }
-          }
+    try {
+      const liste = await ListeModel.findOneAndUpdate(
+        { 
+          _id: new mongoose.Types.ObjectId(id),
+          utilisateurId: new mongoose.Types.ObjectId(utilisateurId)
+        },
+        { 
+          nom, 
+          articles,
+          dateModification: new Date()
+        },
+        { 
+          new: true, // Retourner le document mis à jour
+          runValidators: true 
         }
-      )
-    })
+      );
+      
+      if (!liste) {
+        throw new Error('Liste non trouvée ou non autorisée');
+      }
+      
+      return {
+        id: liste._id,
+        nom: liste.nom,
+        articles: liste.articles,
+        utilisateurId: liste.utilisateurId,
+        dateModification: liste.dateModification
+      };
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour:', error);
+      throw error;
+    }
   },
 
   // Supprimer une liste
   async supprimerListe(id, utilisateurId) {
-    return new Promise((resolve, reject) => {
-      db.run(
-        'DELETE FROM listes WHERE id = ? AND utilisateurId = ? AND estPrincipale = 0',
-        [id, utilisateurId],
-        function(err) {
-          if (err) {
-            reject(err)
-          } else {
-            if (this.changes === 0) {
-              reject(new Error('Liste non trouvée, non autorisée ou liste principale'))
-            } else {
-              resolve({ id })
-            }
-          }
-        }
-      )
-    })
+    try {
+      const result = await ListeModel.deleteOne({ 
+        _id: new mongoose.Types.ObjectId(id),
+        utilisateurId: new mongoose.Types.ObjectId(utilisateurId),
+        estPrincipale: false // Empêcher la suppression de la liste principale
+      });
+      
+      if (result.deletedCount === 0) {
+        throw new Error('Liste non trouvée, non autorisée ou liste principale');
+      }
+      
+      // Supprimer aussi les tokens de partage associés
+      await TokenPartageModel.deleteMany({ 
+        listeId: new mongoose.Types.ObjectId(id) 
+      });
+      
+      return { id };
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      throw error;
+    }
   },
 
   // Créer un token de partage
   async creerTokenPartage(listeId) {
-    return new Promise((resolve, reject) => {
+    try {
       // Générer un token unique
       const token = Buffer.from(JSON.stringify({
         listeId,
         timestamp: Date.now(),
         random: Math.random()
-      })).toString('base64url')
+      })).toString('base64url');
       
-      // Date d'expiration (30 jours)
-      const dateExpiration = new Date()
-      dateExpiration.setDate(dateExpiration.getDate() + 30)
+      const tokenPartage = new TokenPartageModel({
+        token,
+        listeId: new mongoose.Types.ObjectId(listeId)
+      });
       
-      db.run(
-        'INSERT INTO tokens_partage (token, listeId, dateExpiration) VALUES (?, ?, ?)',
-        [token, listeId, dateExpiration.toISOString()],
-        function(err) {
-          if (err) {
-            reject(err)
-          } else {
-            resolve(token)
-          }
-        }
-      )
-    })
+      await tokenPartage.save();
+      
+      return token;
+    } catch (error) {
+      console.error('Erreur lors de la création du token:', error);
+      throw error;
+    }
   },
 
   // Obtenir une liste via un token de partage
   async obtenirParToken(token) {
-    return new Promise((resolve, reject) => {
-      db.get(`
-        SELECT l.*, t.dateExpiration 
-        FROM listes l 
-        JOIN tokens_partage t ON l.id = t.listeId 
-        WHERE t.token = ? AND (t.dateExpiration IS NULL OR t.dateExpiration > CURRENT_TIMESTAMP)
-      `, [token], (err, row) => {
-        if (err) {
-          reject(err)
-        } else if (row) {
-          resolve({
-            id: row.id,
-            nom: row.nom,
-            articles: JSON.parse(row.articles),
-            dateCreation: row.dateCreation,
-            dateModification: row.dateModification,
-            readonly: true
-          })
-        } else {
-          resolve(null)
-        }
-      })
-    })
-  }
-}
-
-// Fermer la connexion lors de l'arrêt
-process.on('SIGINT', () => {
-  db.close((err) => {
-    if (err) {
-      console.error('Erreur lors de la fermeture de la base de données:', err.message)
-    } else {
-      console.log('🔐 Connexion à la base de données fermée')
+    try {
+      const tokenPartage = await TokenPartageModel.findOne({
+        token,
+        dateExpiration: { $gt: new Date() } // Token non expiré
+      }).populate('listeId');
+      
+      if (!tokenPartage || !tokenPartage.listeId) {
+        return null;
+      }
+      
+      const liste = tokenPartage.listeId;
+      
+      return {
+        id: liste._id,
+        nom: liste.nom,
+        articles: liste.articles,
+        dateCreation: liste.dateCreation,
+        dateModification: liste.dateModification,
+        readonly: true
+      };
+    } catch (error) {
+      console.error('Erreur lors de la récupération par token:', error);
+      throw error;
     }
-  })
-})
+  },
+
+  // Sauvegarder une commande de livraison
+  async sauvegarderCommande(listeId, commandeData) {
+    try {
+      const commande = new CommandeModel({
+        listeId: new mongoose.Types.ObjectId(listeId),
+        utilisateurId: new mongoose.Types.ObjectId(commandeData.utilisateurId),
+        serviceId: commandeData.serviceId,
+        orderId: commandeData.orderId,
+        store: commandeData.store,
+        status: commandeData.status,
+        estimatedDelivery: commandeData.estimatedDelivery
+      });
+      
+      await commande.save();
+      
+      return {
+        id: commande._id,
+        listeId: commande.listeId,
+        serviceId: commande.serviceId,
+        orderId: commande.orderId,
+        store: commande.store,
+        status: commande.status,
+        estimatedDelivery: commande.estimatedDelivery,
+        dateCreation: commande.dateCreation
+      };
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde de la commande:', error);
+      throw error;
+    }
+  },
+
+  // Obtenir une commande
+  async obtenirCommande(orderId, utilisateurId) {
+    try {
+      const commande = await CommandeModel.findOne({
+        orderId,
+        utilisateurId: new mongoose.Types.ObjectId(utilisateurId)
+      }).populate('listeId');
+      
+      if (!commande) {
+        return null;
+      }
+      
+      return {
+        id: commande._id,
+        listeId: commande.listeId,
+        serviceId: commande.serviceId,
+        orderId: commande.orderId,
+        store: commande.store,
+        status: commande.status,
+        estimatedDelivery: commande.estimatedDelivery,
+        dateCreation: commande.dateCreation
+      };
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la commande:', error);
+      throw error;
+    }
+  },
+
+  // Mettre à jour une commande
+  async mettreAJourCommande(orderId, updateData) {
+    try {
+      const commande = await CommandeModel.findOneAndUpdate(
+        { orderId },
+        updateData,
+        { new: true }
+      );
+      
+      if (!commande) {
+        throw new Error('Commande non trouvée');
+      }
+      
+      return {
+        id: commande._id,
+        listeId: commande.listeId,
+        serviceId: commande.serviceId,
+        orderId: commande.orderId,
+        store: commande.store,
+        status: commande.status,
+        estimatedDelivery: commande.estimatedDelivery,
+        dateCreation: commande.dateCreation
+      };
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la commande:', error);
+      throw error;
+    }
+  }
+};
+
+// Fonction d'initialisation (optionnelle, pour créer des index si nécessaire)
+export const initializeDatabase = async () => {
+  try {
+    // Créer des index pour optimiser les performances
+    await ListeModel.createIndexes();
+    await TokenPartageModel.createIndexes();
+    await CommandeModel.createIndexes();
+    
+    console.log('✅ Base de données MongoDB initialisée');
+  } catch (error) {
+    console.error('❌ Erreur lors de l\'initialisation de la base de données:', error);
+    throw error;
+  }
+};
+
+export default Liste;

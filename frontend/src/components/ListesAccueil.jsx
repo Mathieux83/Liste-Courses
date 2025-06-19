@@ -1,172 +1,509 @@
-import React, { useState, useEffect } from 'react';
-import { api } from '../utils/api';
-import { Link } from 'react-router-dom';
-import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { toast } from 'react-hot-toast'
+import { api } from '../utils/api'
+import '../styles/style-liste-accueil.css';
 
-export default function ListesAccueil() {
-  const [listes, setListes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+import { 
+  PlusIcon, 
+  TrashIcon, 
+  EyeIcon,
+  ShareIcon,
+  CalendarIcon,
+  ShoppingCartIcon,
+  DocumentTextIcon,
+  XMarkIcon,
+  CheckCircleIcon
+} from '@heroicons/react/24/outline'
+
+export default function ListesAccueil({ isAuthenticated, onLogout }) {
+  const [listes, setListes] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [nouvelleListe, setNouvelleListe] = useState({
     nom: '',
-    articles: []
-  });
-  const [showModal, setShowModal] = useState(false);
+    description: ''
+  })
+  const [showModal, setShowModal] = useState(false)
+  const [creationLoading, setCreationLoading] = useState(false)
+  const [filtreActif, setFiltreActif] = useState('toutes') // toutes, recentes, partagees
+  const [recherche, setRecherche] = useState('')
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      setLoading(false); // Ajoute cette ligne pour éviter le chargement infini
+      return;
+    }
     chargerListes();
-  }, []);
+  }, [isAuthenticated]);
 
   const chargerListes = async () => {
     try {
-      const response = await api.obtenirListes();
-      setListes(response.data);
-      setError('');
+      setLoading(true)
+      setError('')
+      const response = await api.obtenirListes()
+      setListes(response.data || [])
+      toast.success('Listes chargées !')
     } catch (err) {
-      setError('Erreur lors du chargement des listes');
-      console.error(err);
+      if (err.response?.status === 401 && onLogout) {
+        onLogout(); // Déclenche la déconnexion globale
+        return; // Stoppe ici pour éviter d’afficher une erreur inutile
+      }
+      const errorMessage = 'Erreur lors du chargement des listes';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      console.error('Erreur chargement listes:', err);
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const creerNouvelleListe = async (e) => {
-    e.preventDefault();
-    try {
-      await api.creerListe(nouvelleListe);
-      setShowModal(false);
-      setNouvelleListe({ nom: '', articles: [] });
-      await chargerListes();
-    } catch (err) {
-      setError('Erreur lors de la création de la liste');
-      console.error(err);
+    e.preventDefault()
+    
+    if (!nouvelleListe.nom.trim()) {
+      toast.error('Le nom de la liste est requis')
+      return
     }
-  };
 
-  const supprimerListe = async (id) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette liste ?')) {
-      return;
-    }
     try {
-      await api.supprimerListe(id);
-      await chargerListes();
+      setCreationLoading(true)
+      const listeData = {
+        nom: nouvelleListe.nom.trim(),
+        description: nouvelleListe.description.trim(),
+        articles: [],
+        dateCreation: new Date().toISOString(),
+        dateModification: new Date().toISOString()
+      }
+      
+      await api.creerListe(listeData)
+      setShowModal(false)
+      setNouvelleListe({ nom: '', description: '' })
+      await chargerListes()
+      toast.success('Liste créée avec succès !')
     } catch (err) {
-      setError('Erreur lors de la suppression de la liste');
-      console.error(err);
+      const errorMessage = 'Erreur lors de la création de la liste'
+      setError(errorMessage)
+      toast.error(errorMessage)
+      console.error('Erreur création liste:', err)
+    } finally {
+      setCreationLoading(false)
     }
-  };
+  }
 
+  const supprimerListe = async (id, nom) => {
+    if (!window.confirm(`Êtes-vous sûr de vouloir supprimer la liste "${nom}" ?`)) {
+      return
+    }
+
+    try {
+      await api.supprimerListe(id)
+      await chargerListes()
+      toast.success('Liste supprimée !')
+    } catch (err) {
+      const errorMessage = 'Erreur lors de la suppression de la liste'
+      toast.error(errorMessage)
+      console.error('Erreur suppression liste:', err)
+    }
+  }
+
+  const dupliquerListe = async (liste) => {
+    try {
+      const nouvelleListeData = {
+        nom: `${liste.nom} (Copie)`,
+        description: liste.description,
+        articles: liste.articles.map(article => ({
+          ...article,
+          id: Date.now() + Math.random(),
+          checked: false
+        })),
+        dateCreation: new Date().toISOString(),
+        dateModification: new Date().toISOString()
+      }
+      
+      await api.sauvegarderListe(nouvelleListeData)
+      await chargerListes()
+      toast.success('Liste dupliquée !')
+    } catch (err) {
+      toast.error('Erreur lors de la duplication')
+      console.error('Erreur duplication:', err)
+    }
+  }
+
+  // Filtrage et recherche
+  const listesFiltrees = listes.filter(liste => {
+    // Filtre par recherche
+    const correspondRecherche = liste.nom.toLowerCase().includes(recherche.toLowerCase()) ||
+                               (liste.description && liste.description.toLowerCase().includes(recherche.toLowerCase()))
+    
+    if (!correspondRecherche) return false
+
+    // Filtre par catégorie
+    switch (filtreActif) {
+      case 'recentes':
+        const uneSemaineEnMs = 7 * 24 * 60 * 60 * 1000
+        const dateCreation = new Date(liste.dateCreation || Date.now())
+        return Date.now() - dateCreation.getTime() < uneSemaineEnMs
+      case 'partagees':
+        return liste.estPartagee || false
+      default:
+        return true
+    }
+  })
+
+  const formaterDate = (dateString) => {
+    if (!dateString) return 'Date inconnue'
+    return new Date(dateString).toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    })
+  }
+
+  const calculerProgression = (articles) => {
+    if (!articles || articles.length === 0) return 0
+    const articlesCoches = articles.filter(article => article.checked).length
+    return Math.round((articlesCoches / articles.length) * 100)
+  }
+
+  // Loading skeleton
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      <div className="min-h-screen p-4" style={{ backgroundColor: 'var(--primary-color)' }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="loading-skeleton" style={{ height: '3rem', marginBottom: '2rem' }}></div>
+          <div className="listes-grid">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="card">
+                <div className="loading-skeleton" style={{ height: '1.5rem', marginBottom: '1rem' }}></div>
+                <div className="loading-skeleton" style={{ height: '1rem', marginBottom: '0.5rem' }}></div>
+                <div className="loading-skeleton" style={{ height: '1rem' }}></div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-    );
+    )
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Mes Listes de Courses</h1>
-        <button
-          onClick={() => setShowModal(true)}
-          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-        >
-          <PlusIcon className="h-5 w-5 mr-2" />
-          Nouvelle Liste
-        </button>
-      </div>
+    <div className="min-h-screen p-4" style={{ backgroundColor: 'var(--primary-color)' }}>
+      <div className="max-w-6xl mx-auto">
+        
+        {/* Header */}
+        <div className="mb-8">
+          <div className="text-center mb-6">
+            <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--secondary-color)' }}>
+              <ShoppingCartIcon className="w-10 h-10 inline mr-3" />
+              Mes Listes de Courses
+            </h1>
+            <p style={{ color: 'rgba(236, 239, 244, 0.7)' }}>
+              Organisez et gérez toutes vos listes de courses en un seul endroit
+            </p>
+          </div>
 
-      {error && (
-        <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-8">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-red-700">{error}</p>
+          {/* Barre de recherche et filtres */}
+          <div className="card mb-6">
+            <div className="flex flex-col md:flex-row gap-4 items-center">
+              {/* Recherche */}
+              <div className="flex-1 ">
+                <input
+                  type="text"
+                  placeholder="Rechercher une liste..."
+                  value={recherche}
+                  onChange={(e) => setRecherche(e.target.value)}
+                  className="input"
+                />
+              </div>
+
+              {/* Filtres */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setFiltreActif('toutes')}
+                  className={filtreActif === 'toutes' ? 'btn-primary' : 'btn-secondary'}
+                >
+                  Toutes ({listes.length})
+                </button>
+                <button
+                  onClick={() => setFiltreActif('recentes')}
+                  className={filtreActif === 'recentes' ? 'btn-primary' : 'btn-secondary'}
+                >
+                  <CalendarIcon className="w-4 h-4 inline mr-1" />
+                  Récentes
+                </button>
+                <button
+                  onClick={() => setFiltreActif('partagees')}
+                  className={filtreActif === 'partagees' ? 'btn-primary' : 'btn-secondary'}
+                >
+                  <ShareIcon className="w-4 h-4 inline mr-1" />
+                  Partagées
+                </button>
+              </div>
+
+              {/* Bouton nouvelle liste */}
+              <button
+                onClick={() => setShowModal(true)}
+                className="btn-primary"
+              >
+                <PlusIcon className="w-5 h-5 inline mr-2" />
+                Nouvelle Liste
+              </button>
             </div>
           </div>
         </div>
-      )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {listes.map((liste) => (
-          <div
-            key={liste.id}
-            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200"
-          >
-            <Link to={`/liste/${liste.id}`} className="block p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">{liste.nom}</h2>
-              <div className="flex justify-between items-center text-sm text-gray-500">
-                <span>{liste.articles.length} articles</span>
-                <span>Modifiée le {new Date(liste.dateModification).toLocaleDateString()}</span>
-              </div>
-            </Link>
-            <div className="px-6 py-4 bg-gray-50 border-t flex justify-between items-center">
-              <span className="text-sm text-gray-500">
-                {liste.estPrincipale ? 'Liste principale' : 'Liste secondaire'}
-              </span>
-              {!liste.estPrincipale && (
-                <button
-                  onClick={() => supprimerListe(liste.id)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  <TrashIcon className="h-5 w-5" />
-                </button>
-              )}
-            </div>
+        {/* Message d'erreur */}
+        {error && (
+          <div className="form-error p-4 rounded-lg mb-6 text-center" style={{ 
+            backgroundColor: 'rgba(191, 97, 106, 0.1)',
+            border: '1px solid var(--accent-color)'
+          }}>
+            {error}
+            <button
+              onClick={chargerListes}
+              className="btn-secondary ml-4"
+            >
+              Réessayer
+            </button>
           </div>
-        ))}
-      </div>
+        )}
 
-      {/* Modal de création de liste */}
-      {showModal && (
-        <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-            </div>
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <form onSubmit={creerNouvelleListe}>
-                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                  <div className="mb-4">
-                    <label htmlFor="nom" className="block text-sm font-medium text-gray-700">
-                      Nom de la liste
-                    </label>
-                    <input
-                      type="text"
-                      name="nom"
-                      id="nom"
-                      required
-                      className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                      value={nouvelleListe.nom}
-                      onChange={(e) => setNouvelleListe({ ...nouvelleListe, nom: e.target.value })}
-                    />
+        {/* Grille des listes */}
+        {listesFiltrees.length === 0 ? (
+          <div className="card text-center py-16">
+            <div className="text-6xl mb-6">📝</div>
+            {recherche ? (
+              <>
+                <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--secondary-color)' }}>
+                  Aucune liste trouvée
+                </h3>
+                <p className="mb-6" style={{ color: 'rgba(236, 239, 244, 0.7)' }}>
+                  Aucune liste ne correspond à votre recherche "{recherche}"
+                </p>
+                <button
+                  onClick={() => setRecherche('')}
+                  className="btn-secondary"
+                >
+                  Effacer la recherche
+                </button>
+              </>
+            ) : (
+              <>
+                <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--secondary-color)' }}>
+                  Aucune liste pour le moment
+                </h3>
+                <p className="mb-6" style={{ color: 'rgba(236, 239, 244, 0.7)' }}>
+                  Créez votre première liste de courses pour commencer
+                </p>
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="btn-primary"
+                >
+                  <PlusIcon className="w-5 h-5 inline mr-2" />
+                  Créer ma première liste
+                </button>
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="listes-grid">
+            {listesFiltrees.map((liste) => {
+              const progression = calculerProgression(liste.articles)
+              const nbArticles = liste.articles?.length || 0
+              const nbArticlesCoches = liste.articles?.filter(a => a.checked).length || 0
+
+              return (
+                <div key={liste.id} className="liste-card group">
+                  {/* Header de la carte */}
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex-1">
+                      <h3 className="liste-card-title group-hover:text-accent-color transition-colors">
+                        {liste.nom}
+                      </h3>
+                      {liste.description && (
+                        <p className="text-sm" style={{ color: 'rgba(236, 239, 244, 0.6)' }}>
+                          {liste.description}
+                        </p>
+                      )}
+                    </div>
+                    
+                    {liste.estPartagee && (
+                      <div className="badge-primary">
+                        <ShareIcon className="w-3 h-3 inline mr-1" />
+                        Partagée
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Métadonnées */}
+                  <div className="liste-card-meta">
+                    <div className="flex items-center justify-between text-xs mb-2">
+                      <span>
+                        <CalendarIcon className="w-4 h-4 inline mr-1" />
+                        {formaterDate(liste.dateModification || liste.dateCreation)}
+                      </span>
+                      <span>
+                        <DocumentTextIcon className="w-4 h-4 inline mr-1" />
+                        {nbArticles} article{nbArticles > 1 ? 's' : ''}
+                      </span>
+                    </div>
+
+                    {/* Barre de progression */}
+                    {nbArticles > 0 && (
+                      <div className="mb-4">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-xs" style={{ color: 'var(--secondary-color)' }}>
+                            Progression
+                          </span>
+                          <span className="text-xs font-medium" style={{ color: 'var(--secondary-color)' }}>
+                            {nbArticlesCoches}/{nbArticles} ({progression}%)
+                          </span>
+                        </div>
+                        <div className="w-full rounded-full h-2" style={{ backgroundColor: 'var(--primary-color)' }}>
+                          <div
+                            className="h-2 rounded-full transition-all duration-300"
+                            style={{
+                              width: `${progression}%`,
+                              backgroundColor: progression === 100 ? 'var(--success-color)' : 'var(--secondary-color)'
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    )}
+
+                    {progression === 100 && nbArticles > 0 && (
+                      <div className="flex items-center mb-3 text-sm" style={{ color: 'var(--success-color)' }}>
+                        <CheckCircleIcon className="w-4 h-4 mr-2" />
+                        Liste terminée !
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-2 mt-4">
+                    <Link
+                      to={`/liste/${liste.id}`}
+                      className="btn-primary flex-1 text-center"
+                    >
+                      <EyeIcon className="w-4 h-4 inline mr-2" />
+                      Ouvrir
+                    </Link>
+                    
+                    <button
+                      onClick={() => dupliquerListe(liste)}
+                      className="btn-secondary"
+                      title="Dupliquer"
+                    >
+                      <DocumentTextIcon className="w-4 h-4" />
+                    </button>
+                    
+                    <button
+                      onClick={() => supprimerListe(liste.id, liste.nom)}
+                      className="btn-danger"
+                      title="Supprimer"
+                    >
+                      <TrashIcon className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
-                <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                  <button
-                    type="submit"
-                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
-                  >
-                    Créer
-                  </button>
+              )
+            })}
+          </div>
+        )}
+
+        {/* Modal de création */}
+        {showModal && (
+          <div className="modal-overlay" onClick={() => setShowModal(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              {/* Header du modal */}
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="modal-title">
+                  <PlusIcon className="w-6 h-6 inline mr-2" />
+                  Nouvelle Liste de Courses
+                </h2>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  style={{ color: 'var(--secondary-color)' }}
+                >
+                  <XMarkIcon className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Formulaire */}
+              <form onSubmit={creerNouvelleListe} className="space-y-6">
+                <div>
+                  <label htmlFor="nom" className="block text-sm font-medium mb-2" 
+                         style={{ color: 'var(--secondary-color)' }}>
+                    Nom de la liste *
+                  </label>
+                  <input
+                    id="nom"
+                    type="text"
+                    required
+                    value={nouvelleListe.nom}
+                    onChange={(e) => setNouvelleListe({
+                      ...nouvelleListe,
+                      nom: e.target.value
+                    })}
+                    placeholder="Ex: Courses du weekend"
+                    className="input"
+                    maxLength={100}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="description" className="block text-sm font-medium mb-2" 
+                         style={{ color: 'var(--secondary-color)' }}>
+                    Description (optionnelle)
+                  </label>
+                  <textarea
+                    id="description"
+                    value={nouvelleListe.description}
+                    onChange={(e) => setNouvelleListe({
+                      ...nouvelleListe,
+                      description: e.target.value
+                    })}
+                    placeholder="Décrivez votre liste..."
+                    className="input resize-none"
+                    rows={3}
+                    maxLength={500}
+                  />
+                </div>
+
+                {/* Actions du modal */}
+                <div className="flex gap-3 pt-4 border-t" style={{ borderColor: 'var(--secondary-color)' }}>
                   <button
                     type="button"
-                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                     onClick={() => setShowModal(false)}
+                    className="btn-secondary flex-1"
+                    disabled={creationLoading}
                   >
                     Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-primary flex-1"
+                    disabled={creationLoading || !nouvelleListe.nom.trim()}
+                  >
+                    {creationLoading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white inline-block mr-2"></div>
+                        Création...
+                      </>
+                    ) : (
+                      <>
+                        <PlusIcon className="w-4 h-4 inline mr-2" />
+                        Créer la liste
+                      </>
+                    )}
                   </button>
                 </div>
               </form>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
-  );
+  )
 }

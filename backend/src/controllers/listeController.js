@@ -1,17 +1,28 @@
 import { Liste } from '../models/Liste.js'
 import { getIO } from '../socket.js'
+import mongoose from 'mongoose';
 
 export const listeController = {
   // Obtenir toutes les listes d'un utilisateur
   async getListes(req, res) {
     try {
-      const listes = await Liste.getListesUtilisateur(req.user.id)
-      res.json(listes)
-    } catch (error) {
-      console.error('Erreur lors de la récupération des listes:', error)
-      res.status(500).json({ error: 'Erreur interne du serveur' })
-    }
-  },
+      // Ajoute ce log pour voir l'ID utilisateur et son type
+      // console.log('req.user.id:', req.user.id, typeof req.user.id);
+
+        // Correction : s'assurer que l'ID est bien un ObjectId
+      let utilisateurId = req.user.id;
+      if (typeof utilisateurId === 'string' && utilisateurId.length === 24) {
+        try {
+          utilisateurId = new mongoose.Types.ObjectId(utilisateurId);
+        } catch (e) {}
+      }
+      const listes = await Liste.getListesUtilisateur(utilisateurId);
+    res.json(listes);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des listes:', error);
+    res.status(500).json({ error: 'Erreur interne du serveur' });
+  }
+},
 
   // Obtenir la liste principale
   async obtenirPrincipale(req, res) {
@@ -44,73 +55,58 @@ export const listeController = {
   // Sauvegarder une liste principale
   async sauvegarder(req, res) {
     try {
-      const { nom, articles } = req.body
-      
-      // Validation des données
-      if (!nom || !Array.isArray(articles)) {
-        return res.status(400).json({ 
-          error: 'Données invalides',
-          details: 'Le nom et les articles sont requis'
-        })
-      }
-
-      const liste = await Liste.sauvegarderPrincipale(nom, articles, req.user.id)
-      res.json(liste)
+      const { nom, articles } = req.body;
+      const liste = await Liste.sauvegarderPrincipale(nom, articles, req.user.id);
+      res.json(liste);
     } catch (error) {
-      console.error('Erreur lors de la sauvegarde:', error)
-      res.status(500).json({ error: 'Erreur lors de la sauvegarde' })
+      console.error('Erreur lors de la sauvegarde:', error);
+      res.status(500).json({ error: 'Erreur lors de la sauvegarde' });
     }
   },
 
   // Créer une nouvelle liste
   async creerListe(req, res) {
     try {
-      const { nom, articles } = req.body
-      
-      // Validation des données
-      if (!nom || !Array.isArray(articles)) {
-        return res.status(400).json({ 
-          error: 'Données invalides',
-          details: 'Le nom et les articles sont requis'
-        })
-      }      const liste = await Liste.creerListe(nom, articles, req.user.id)
+      let utilisateurId = req.user.id;
+      if (typeof utilisateurId === 'string' && utilisateurId.length === 24) {
+        try {
+          utilisateurId = new (require('mongoose')).Types.ObjectId(utilisateurId);
+        } catch (e) {}
+      }
+      const { nom, articles } = req.body;
+      const liste = await Liste.creerListe(nom, articles, utilisateurId); // <-- ici, passe utilisateurId
       // Émettre un événement pour informer les clients connectés
-      getIO().to(`user-${req.user.id}`).emit('liste:created', liste)
-      res.status(201).json(liste)
+      getIO().to(`user-${req.user.id}`).emit('liste:created', liste);
+      res.status(201).json(liste);
     } catch (error) {
-      console.error('Erreur lors de la création de la liste:', error)
-      res.status(500).json({ error: 'Erreur lors de la création' })
+      console.error('Erreur lors de la création de la liste:', error);
+      res.status(500).json({ error: 'Erreur lors de la création' });
     }
   },
 
   // Mettre à jour une liste
   async mettreAJourListe(req, res) {
     try {
-      const { nom, articles } = req.body
-      
+      const { nom, articles } = req.body;
       // Validation des données
-      if (!nom || !Array.isArray(articles)) {
-        return res.status(400).json({ 
-          error: 'Données invalides',
-          details: 'Le nom et les articles sont requis'
-        })
-      }      const liste = await Liste.mettreAJourListe(req.params.id, nom, articles, req.user.id)
+      const liste = await Liste.mettreAJourListe(req.params.id, nom, articles, req.user.id);
       // Émettre un événement pour informer les clients connectés
-      getIO().to(`liste-${req.params.id}`).emit('liste:updated', liste)
-      res.json(liste)
+      getIO().to(`liste-${req.params.id}`).emit('liste:updated', liste);
+      res.json(liste);
     } catch (error) {
       if (error.message === 'Liste non trouvée ou non autorisée') {
-        res.status(404).json({ error: error.message })
+        res.status(404).json({ error: error.message });
       } else {
-        console.error('Erreur lors de la mise à jour:', error)
-        res.status(500).json({ error: 'Erreur lors de la mise à jour' })
+        console.error('Erreur lors de la mise à jour:', error);
+        res.status(500).json({ error: 'Erreur lors de la mise à jour' });
       }
     }
   },
 
   // Supprimer une liste
   async supprimerListe(req, res) {
-    try {      await Liste.supprimerListe(req.params.id, req.user.id)
+    try {      
+      await Liste.supprimerListe(req.params.id, req.user.id)
       // Émettre un événement pour informer les clients connectés
       getIO().to(`user-${req.user.id}`).emit('liste:deleted', { id: req.params.id })
       res.status(204).end()

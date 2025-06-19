@@ -1,28 +1,29 @@
 // Interfaces pour les différents services de livraison
+
 const DeliveryServices = {
-  // Carrefour Drive
-  CARREFOUR: {
-    name: 'Carrefour Drive',
-    async checkAvailability(postalCode) {
-      try {
-        const response = await fetch(`https://api.carrefour.fr/drive/magasins?codePostal=${postalCode}`);
-        const data = await response.json();
-        return data.stores.length > 0;
-      } catch (error) {
-        console.error('Erreur Carrefour API:', error);
-        return false;
-      }
-    },
-    async createOrder(items, store) {
-      // Simulation de création de commande
-      return {
-        orderId: `CRF-${Date.now()}`,
-        store,
-        items,
-        estimatedDelivery: new Date(Date.now() + 24 * 60 * 60 * 1000)
-      };
-    }
-  },
+  // Carrefour Drive // API OFFICIEL non fonctionnnel car ils sont toujours en cours de developpement 
+  // CARREFOUR: {
+  //   name: 'Carrefour Drive',
+  //   async checkAvailability(postalCode) {
+  //     try {
+  //       const response = await fetch(`https://api.carrefour.fr/drive/magasins?codePostal=${postalCode}`);
+  //       const data = await response.json();
+  //       return data.stores.length > 0;
+  //     } catch (error) {
+  //       console.error('Erreur Carrefour API:', error);
+  //       return false;
+  //     }
+  //   },
+  //   async createOrder(items, store) {
+  //     // Simulation de création de commande
+  //     return {
+  //       orderId: `CRF-${Date.now()}`,
+  //       store,
+  //       items,
+  //       estimatedDelivery: new Date(Date.now() + 24 * 60 * 60 * 1000)
+  //     };
+  //   }
+  // },
 
   // Leclerc Drive
   LECLERC: {

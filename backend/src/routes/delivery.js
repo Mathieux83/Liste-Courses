@@ -1,6 +1,16 @@
 import express from 'express';
 import { deliveryController } from '../controllers/deliveryController.js';
 import auth from '../middleware/auth.js';
+import { createOrderValidation, orderIdParamValidation, postalCodeQueryValidation} from '../middleware/deliveryValidation.js'
+
+// Middleware pour gérer les erreurs de validation
+const handleValidation = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  next();
+};
 
 const router = express.Router();
 
@@ -8,15 +18,35 @@ const router = express.Router();
 router.use(auth);
 
 // Obtenir les services de livraison disponibles
-router.get('/services', deliveryController.getAvailableServices);
+router.get(
+  '/services',
+  postalCodeQueryValidation,
+  handleValidation,
+  deliveryController.getAvailableServices
+);
 
 // Créer une commande de livraison
-router.post('/orders', deliveryController.createOrder);
+router.post(
+  '/order',
+  createOrderValidation,
+  handleValidation,
+  deliveryController.createOrder
+);
 
 // Obtenir le statut d'une commande
-router.get('/orders/:orderId', deliveryController.getOrderStatus);
+router.get(
+  '/order/:orderId',
+  orderIdParamValidation,
+  handleValidation,
+  deliveryController.getOrderStatus
+);
 
 // Annuler une commande
-router.delete('/orders/:orderId', deliveryController.cancelOrder);
+router.post(
+  '/order/:orderId/cancel',
+  orderIdParamValidation,
+  handleValidation,
+  deliveryController.cancelOrder
+);
 
 export default router;

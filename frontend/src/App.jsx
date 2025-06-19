@@ -5,16 +5,21 @@ import ListePartagee from './components/ListePartage'
 import Login from './components/Login'
 import Register from './components/Register'
 import ListesAccueil from './components/ListesAccueil'
-import authService from './utils/authService'
+import LogoutButton from './components/LogoutButton'
+import axios from 'axios'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = () => {
-      const isAuth = authService.isAuthenticated();
-      setIsAuthenticated(isAuth);
+    const checkAuth = async () => {
+      try {
+        await axios.get(`${import.meta.env.VITE_API_URL}/auth/me`, { withCredentials: true });
+        setIsAuthenticated(true);
+      } catch (error) {
+        setIsAuthenticated(false);
+      }
       setIsLoading(false);
     };
 
@@ -36,16 +41,18 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <LogoutButton onLogout={() => setIsAuthenticated(false)}/>
       <Routes>
         {/* Routes publiques */}
-        <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
+        <Route path="/login" element={!isAuthenticated ? <Login onLogin={() => setIsAuthenticated(true)} /> : <Navigate to="/" />} />
         <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />
+        <Route path="/accueil" element={isAuthenticated ? <ListesAccueil isAuthenticated={isAuthenticated} onLogout={() => setIsAuthenticated(false)} /> : <Navigate to="/" />} />
         <Route path="/liste-partagee/:token" element={<ListePartagee />} />
 
         {/* Routes protégées */}
         <Route path="/" element={
           <PrivateRoute>
-            <ListesAccueil />
+            <ListesAccueil isAuthenticated={isAuthenticated} onLogout={() => setIsAuthenticated(false)} />
           </PrivateRoute>
         } />
         <Route path="/liste/:id" element={

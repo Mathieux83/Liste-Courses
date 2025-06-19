@@ -6,31 +6,163 @@
 /* Import de la police Inter */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* Variables personnalisées */
+/* Variables personnalisées corrigées - Règle 60-30-10 */
 :root {
-  --primary-color: #4f46e5;
-  --secondary-color: #818cf8;
-  --success-color: #22c55e;
-  --danger-color: #ef4444;
-  --warning-color: #f59e0b;
+  /* Couleurs Nord */
+  --nord14: #a3be8c;  /* Success Color */
+  --nord12: #d08770;  /* Warning Color */
+  --nord0: #2E3440;   /* Dominante (60%) - Couleur foncée */
+  --nord8: #88C0D0;   /* Secondaire (30%) */
+  --nord11: #BF616A;  /* Accent (10%) */
+  
+  /* Application de la règle 60-30-10 */
+  --primary-color: var(--nord0);      /* 60% - Dominante foncée */
+  --secondary-color: var(--nord8);    /* 30% - Secondaire claire */
+  --accent-color: var(--nord11);      /* 10% - Accent rouge */
+  --success-color: var(--nord14);
+  --warning-color: var(--nord12);     /* Correction erreur syntaxe */
+  
+  /* Variations pour nuancer */
+  --primary-light: #3b4252;
+  --primary-dark: #1e222a;
+  --secondary-light: #a9d1db;
+  --secondary-dark: #5e81ac;
+  --text-light: #eceff4;
+  --text-dark: #2e3440;
 }
 
-/* Configuration de base */
+/* Configuration de base - 60% couleur dominante */
 @layer base {
   body {
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
+    background-color: var(--primary-color); /* 60% - Fond principal foncé */
+    color: var(--text-light); /* Texte clair sur fond foncé */
+    min-height: 100vh;
+  }
+  
+  /* Grandes surfaces - 60% */
+  main, .page-wrapper {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+  }
+  
+  /* Headers principaux */
+  h1, h2, h3 {
+    color: var(--secondary-color); /* 30% pour les titres */
+  }
+  
+  /* Liens de base */
+  a {
+    color: var(--accent-color); /* 10% pour les liens */
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  a:hover {
+    color: var(--secondary-light);
+    text-decoration: underline;
   }
 }
 
-/* Composants personnalisés */
+/* Composants personnalisés - Application 60-30-10 */
 @layer components {
+  /* Boutons primaires - 10% accent */
   .btn-primary {
-    @apply bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+    @apply font-medium py-2 px-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
   }
   
+  .btn-primary:hover {
+    background-color: var(--warning-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(191, 97, 106, 0.3);
+  }
+  
+  .btn-primary:focus {
+    ring-color: var(--accent-color);
+  }
+
+  /* Boutons secondaires - 30% secondaire */
   .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2;
+    @apply font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+    background-color: var(--secondary-dark);
+    color: var(--text-light);
+    border: 1px solid var(--secondary-color);
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--secondary-color);
+    color: var(--text-dark);
+  }
+  
+  /* Bouton danger - 10% accent variant */
+  .btn-danger {
+    @apply font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    background-color: var(--accent-color);
+    color: white;
+  }
+  
+  .btn-danger:hover {
+    background-color: #a54a56;
+  }
+
+  /* Inputs - 30% secondaire pour bordures */
+  .input {
+    @apply w-full px-4 py-2 rounded-md transition-all duration-200 focus:outline-none focus:ring-2;
+    background-color: var(--primary-light); /* 60% variation */
+    border: 2px solid var(--secondary-color); /* 30% */
+    color: var(--text-light);
+  }
+  
+  .input:focus {
+    border-color: var(--secondary-light);
+    ring-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(136, 192, 208, 0.3);
+  }
+  
+  .input::placeholder {
+    color: rgba(236, 239, 244, 0.6);
+  }
+
+  /* Cards - 60% fond avec bordure 30% */
+  .card {
+    @apply rounded-lg p-6 transition-all duration-200;
+    background-color: var(--primary-light); /* 60% variation */
+    border: 1px solid var(--secondary-color); /* 30% */
+    box-shadow: 0 4px 6px rgba(136, 192, 208, 0.1);
+  }
+  
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(136, 192, 208, 0.15);
+  }
+
+  /* Badges - 10% accent */
+  .badge {
+    @apply px-2 py-1 text-sm rounded-full font-medium;
+  }
+
+  .badge-primary {
+    background-color: var(--accent-color);
+    color: white;
+  }
+
+  .badge-success {
+    background-color: var(--success-color);
+    color: var(--text-dark);
+  }
+
+  .badge-warning {
+    background-color: var(--warning-color);
+    color: var(--text-dark);
+  }
+
+  .badge-danger {
+    background-color: var(--accent-color);
+    color: white;
   }
 }
 
@@ -45,93 +177,74 @@
   to { transform: translateY(0); opacity: 1; }
 }
 
-/* Classes utilitaires personnalisées */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideDown 0.3s ease;
+}
+
+/* Classes utilitaires spécifiques aux listes */
 @layer components {
-  .btn {
-    @apply px-4 py-2 rounded-md font-semibold transition-colors duration-200;
+  /* Items de liste - 60% fond avec hover 30% */
+  .liste-item {
+    @apply flex items-center justify-between p-4 transition-all duration-200;
+    background-color: var(--primary-light); /* 60% variation */
+    border-bottom: 1px solid var(--secondary-color); /* 30% */
+    color: var(--text-light);
   }
 
-  .btn-primary {
-    @apply bg-indigo-600 text-white hover:bg-indigo-700;
+  .liste-item:hover {
+    background-color: var(--secondary-dark); /* 30% au hover */
   }
 
-  .btn-secondary {
-    @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
+  .liste-item-checked {
+    background-color: var(--primary-dark); /* 60% plus foncé */
+    opacity: 0.75;
   }
 
-  .btn-danger {
-    @apply bg-red-600 text-white hover:bg-red-700;
+  .liste-item-checked .liste-item-text {
+    @apply line-through;
+    color: rgba(236, 239, 244, 0.6);
   }
-
-  .input {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent;
-  }
-
-  .card {
-    @apply bg-white rounded-lg shadow-md p-6;
-  }
-
-  .badge {
-    @apply px-2 py-1 text-sm rounded-full;
-  }
-
-  .badge-primary {
-    @apply bg-indigo-100 text-indigo-800;
-  }
-
-  .badge-success {
-    @apply bg-green-100 text-green-800;
-  }
-
-  .badge-warning {
-    @apply bg-yellow-100 text-yellow-800;
-  }
-
-  .badge-danger {
-    @apply bg-red-100 text-red-800;
-  }
-}
-
-/* Styles pour les composants spécifiques */
-.liste-item {
-  @apply flex items-center justify-between p-4 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200;
-}
-
-.liste-item-checked {
-  @apply bg-gray-50 opacity-75;
-}
-
-.liste-item-checked .liste-item-text {
-  @apply line-through text-gray-500;
 }
 
 /* Styles pour le mode hors ligne */
 .offline-indicator {
-  @apply fixed bottom-4 right-4 bg-yellow-500 text-white px-4 py-2 rounded-full shadow-lg;
+  @apply fixed bottom-4 right-4 px-4 py-2 rounded-full shadow-lg;
+  background-color: var(--warning-color);
+  color: var(--text-dark);
   animation: slideIn 0.3s ease-out;
 }
 
-/* Styles pour le mode sombre */
+/* Mode sombre adaptatif */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-primary: #1f2937;
-    --text-primary: #f3f4f6;
+    --primary-color: #1e222a; /* 60% encore plus foncé */
+    --primary-light: #2e3440;
+    --primary-dark: #151820;
+    --secondary-color: #5e81ac; /* 30% plus sombre */
+    --secondary-light: #88c0d0;
+    --secondary-dark: #4c6594;
   }
+}
 
+/* Responsive design */
+@media (max-width: 640px) {
   .card {
-    @apply bg-gray-800 text-gray-100;
+    @apply p-4;
   }
-
-  .input {
-    @apply bg-gray-700 border-gray-600 text-white;
-  }
-
-  .liste-item {
-    @apply border-gray-700 hover:bg-gray-800;
-  }
-
-  .liste-item-checked {
-    @apply bg-gray-800;
+  
+  .btn-primary, .btn-secondary {
+    @apply py-3 px-6 text-sm;
   }
 }
 
@@ -142,6 +255,14 @@
   }
 
   .card {
-    @apply shadow-none border border-gray-300;
+    @apply shadow-none;
+    border: 1px solid #333;
+    background: white !important;
+    color: black !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
   }
 }
