@@ -6,14 +6,13 @@ export const listeController = {
   // Obtenir toutes les listes d'un utilisateur
   async getListes(req, res) {
     try {
-      // Ajoute ce log pour voir l'ID utilisateur et son type
-      // console.log('req.user.id:', req.user.id, typeof req.user.id);
-
-        // Correction : s'assurer que l'ID est bien un ObjectId
+      // if (!req.user || !req.user.id) {
+      //   return res.status(401).json({ error: 'Utilisateur non authentifié' });
+      // }
       let utilisateurId = req.user.id;
       if (typeof utilisateurId === 'string' && utilisateurId.length === 24) {
         try {
-          utilisateurId = new mongoose.Types.ObjectId(utilisateurId);
+          utilisateurId = utilisateurId;
         } catch (e) {}
       }
       const listes = await Liste.getListesUtilisateur(utilisateurId);
@@ -70,7 +69,8 @@ export const listeController = {
       let utilisateurId = req.user.id;
       if (typeof utilisateurId === 'string' && utilisateurId.length === 24) {
         try {
-          utilisateurId = new (require('mongoose')).Types.ObjectId(utilisateurId);
+          // utilisateurId = new (require('mongoose')).Types.ObjectId(utilisateurId);
+          utilisateurId = utilisateurId;
         } catch (e) {}
       }
       const { nom, articles } = req.body;
@@ -125,12 +125,12 @@ export const listeController = {
     try {
       const { id } = req.params
       
-      const liste = await Liste.obtenirParId(parseInt(id))
+      const liste = await Liste.obtenirParId(id, req.user.id)
       if (!liste) {
         return res.status(404).json({ error: 'Liste non trouvée' })
       }
 
-      const token = await Liste.creerTokenPartage(parseInt(id))
+      const token = await Liste.creerTokenPartage(id)
       res.json({ token })
     } catch (error) {
       console.error('Erreur lors de la génération du token:', error)

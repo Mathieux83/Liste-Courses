@@ -1,3 +1,46 @@
+/* 
+  ============================================================================
+  🎨 Liste de Courses - Présentation du Thème CSS
+  ============================================================================
+
+  Ce fichier définit le style principal de l'application "Liste de Courses".
+  Il applique la règle de design 60-30-10 pour une interface moderne, lisible 
+  et harmonieuse, inspirée de la palette Nord.
+
+  ---------------------------------------------------------------------------
+  🟦 Règle 60-30-10 :
+    - 60% Couleur dominante (fond, surfaces principales)
+    - 30% Couleur secondaire (titres, bordures, éléments interactifs)
+    - 10% Couleur d'accent (actions, boutons principaux, badges)
+  ---------------------------------------------------------------------------
+
+  🎨 Palette Nord :
+    --primary-color      : Dominante (60%) - Fond principal foncé
+    --secondary-color    : Secondaire (30%) - Titres, bordures, hover
+    --accent-color       : Accent (10%) - Actions, boutons, badges
+    --success-color      : Succès (validation, progression)
+    --warning-color      : Avertissement (hover, alertes)
+    --primary-light/dark : Variations pour nuances et contrastes
+    --text-light/dark    : Couleurs de texte adaptées
+
+  ---------------------------------------------------------------------------
+  🛠️  Organisation :
+    - Variables CSS : Palette et variations
+    - Base          : Styles globaux, typographie, couleurs de fond
+    - Components    : Boutons, inputs, cards, badges, items de liste
+    - Utilitaires   : Animations, responsive, impression, accessibilité
+    - Mode sombre   : Adaptation automatique selon le système
+  ---------------------------------------------------------------------------
+
+  💡 Astuce : Utilisez les classes utilitaires et composants pour garantir 
+  la cohérence visuelle sur toute l'application.
+
+  Auteur : Mathieux83
+  Dernière mise à jour : 2025
+
+  ============================================================================
+*/
+
 /* Styles globaux */
 @tailwind base;
 @tailwind components;
@@ -38,7 +81,8 @@
     line-height: 1.6;
     background-color: var(--primary-color); /* 60% - Fond principal foncé */
     color: var(--text-light); /* Texte clair sur fond foncé */
-    min-height: 100vh;
+    margin: 0;
+    padding: 0;
   }
   
   /* Grandes surfaces - 60% */
@@ -68,6 +112,17 @@
 /* Composants personnalisés - Application 60-30-10 */
 @layer components {
   /* Boutons primaires - 10% accent */
+   .btn-accueil {
+    width: fit-content;
+    display: flex;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-accueil:hover {
+    transform: scale(1.1);
+  }
+
   .btn-primary {
     @apply font-medium py-2 px-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
     background-color: var(--accent-color);

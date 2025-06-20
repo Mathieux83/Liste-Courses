@@ -3,7 +3,6 @@
 /* Container principal - 60% couleur dominante */
 .listes-accueil-container {
   background-color: var(--primary-color);
-  min-height: 100vh;
   padding: 1rem;
 }
 

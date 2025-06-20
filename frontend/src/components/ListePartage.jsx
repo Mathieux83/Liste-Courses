@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { api } from '../utils/api'
+import '../styles/style-liste-partage.css'
 import { 
   EyeIcon,
   ShareIcon,
@@ -52,20 +53,24 @@ export default function ListePartage() {
 
     try {
       setUpdateLoading(true)
-      
-      // Mise à jour optimiste de l'interface
-      setListe(prevListe => ({
-        ...prevListe,
-        articles: prevListe.articles.map(article =>
-          article.id === articleId
-            ? { ...article, checked: !article.checked, dateModification: new Date().toISOString() }
-            : article
-        ),
-        dateModification: new Date().toISOString()
-      }))
+      let newChecked = false;
+      setListe(prevListe => {
+        const updatedArticles = prevListe.articles.map(article => {
+          if (article.id === articleId) {
+            newChecked = !article.checked;
+            return { ...article, checked: newChecked, dateModification: new Date().toISOString() };
+          }
+          return article;
+        });
+        return {
+          ...prevListe,
+          articles: updatedArticles,
+          dateModification: new Date().toISOString()
+        };
+      })
 
       // Synchronisation avec le serveur
-      await api.toggleArticlePartage(token, articleId)
+      await api.mettreAJourArticlePartage(token, articleId, newChecked)
       toast.success('Article mis à jour !')
       
     } catch (error) {
@@ -111,7 +116,7 @@ export default function ListePartage() {
   // État de chargement
   if (loading) {
     return (
-      <div className="min-h-screen p-4" style={{ backgroundColor: 'var(--primary-color)' }}>
+      <div className="p-4" style={{ backgroundColor: 'var(--primary-color)' }}>
         <div className="max-w-4xl mx-auto">
           <div className="card mb-6">
             <div className="loading-skeleton" style={{ height: '2.5rem', marginBottom: '1rem' }}></div>

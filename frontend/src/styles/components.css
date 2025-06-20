@@ -6,7 +6,6 @@
   margin: 0 auto;
   padding: 2rem;
   background-color: var(--primary-color); /* 60% */
-  min-height: 100vh;
 }
 
 .liste-header {
@@ -447,3 +446,8 @@
     padding: 1rem;
   }
 } */
+
+/* Correction pour éviter le scroll inutile sur la page d'accueil des listes */
+.listes-accueil-container {
+  background-color: var(--primary-color);
+}

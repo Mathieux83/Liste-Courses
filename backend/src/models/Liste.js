@@ -1,9 +1,3 @@
-// Passage a mangooseDB 
-// Need to refactor alle the code for mergin to sqlite3 to mongooseDB
-// Help me !!
-
-
-// import sqlite3 from 'sqlite3' 
 import mongoose from 'mongoose'
 
 // Schéma pour les articles
@@ -123,7 +117,7 @@ export const Liste = {
       // Vérifier si une liste principale existe pour cet utilisateur
       let liste = await ListeModel.findOne({ 
         estPrincipale: true, 
-        utilisateurId: new mongoose.Types.ObjectId(utilisateurId) 
+        utilisateurId: utilisateurId 
       });
       
       if (liste) {
@@ -143,7 +137,7 @@ export const Liste = {
         liste = new ListeModel({
           nom,
           articles,
-          utilisateurId: new mongoose.Types.ObjectId(utilisateurId),
+          utilisateurId: utilisateurId,
           estPrincipale: true
         });
         
@@ -168,7 +162,7 @@ export const Liste = {
     try {
       const liste = await ListeModel.findOne({ 
         estPrincipale: true,
-        utilisateurId: new mongoose.Types.ObjectId(utilisateurId)
+        utilisateurId: utilisateurId
       });
       
       if (!liste) {
@@ -194,8 +188,8 @@ export const Liste = {
   async obtenirParId(id, utilisateurId) {
     try {
       const liste = await ListeModel.findOne({ 
-        _id: new mongoose.Types.ObjectId(id),
-        utilisateurId: new mongoose.Types.ObjectId(utilisateurId)
+        _id: id,
+        utilisateurId: utilisateurId
       });
       
       if (!liste) {
@@ -221,7 +215,7 @@ export const Liste = {
   async getListesUtilisateur(utilisateurId) {
     try {
       const listes = await ListeModel.find({ 
-        utilisateurId: new mongoose.Types.ObjectId(utilisateurId) 
+        utilisateurId: utilisateurId 
       }).sort({ dateModification: -1 });
       
       return listes.map(liste => ({
@@ -245,7 +239,7 @@ export const Liste = {
       const liste = new ListeModel({
         nom,
         articles,
-        utilisateurId: new mongoose.Types.ObjectId(utilisateurId),
+        utilisateurId: utilisateurId,
         estPrincipale: false
       });
       
@@ -271,8 +265,8 @@ export const Liste = {
     try {
       const liste = await ListeModel.findOneAndUpdate(
         { 
-          _id: new mongoose.Types.ObjectId(id),
-          utilisateurId: new mongoose.Types.ObjectId(utilisateurId)
+          _id: id,
+          utilisateurId: utilisateurId
         },
         { 
           nom, 
@@ -306,8 +300,8 @@ export const Liste = {
   async supprimerListe(id, utilisateurId) {
     try {
       const result = await ListeModel.deleteOne({ 
-        _id: new mongoose.Types.ObjectId(id),
-        utilisateurId: new mongoose.Types.ObjectId(utilisateurId),
+        _id: id,
+        utilisateurId: utilisateurId,
         estPrincipale: false // Empêcher la suppression de la liste principale
       });
       
@@ -317,7 +311,7 @@ export const Liste = {
       
       // Supprimer aussi les tokens de partage associés
       await TokenPartageModel.deleteMany({ 
-        listeId: new mongoose.Types.ObjectId(id) 
+        listeId: id 
       });
       
       return { id };
@@ -339,7 +333,7 @@ export const Liste = {
       
       const tokenPartage = new TokenPartageModel({
         token,
-        listeId: new mongoose.Types.ObjectId(listeId)
+        listeId: listeId
       });
       
       await tokenPartage.save();
@@ -371,6 +365,7 @@ export const Liste = {
         articles: liste.articles,
         dateCreation: liste.dateCreation,
         dateModification: liste.dateModification,
+        utilisateurId: liste.utilisateurId, // Ajouté pour la sauvegarde
         readonly: true
       };
     } catch (error) {
@@ -383,8 +378,8 @@ export const Liste = {
   async sauvegarderCommande(listeId, commandeData) {
     try {
       const commande = new CommandeModel({
-        listeId: new mongoose.Types.ObjectId(listeId),
-        utilisateurId: new mongoose.Types.ObjectId(commandeData.utilisateurId),
+        listeId: listeId,
+        utilisateurId: commandeData.utilisateurId,
         serviceId: commandeData.serviceId,
         orderId: commandeData.orderId,
         store: commandeData.store,
@@ -415,7 +410,7 @@ export const Liste = {
     try {
       const commande = await CommandeModel.findOne({
         orderId,
-        utilisateurId: new mongoose.Types.ObjectId(utilisateurId)
+        utilisateurId: utilisateurId
       }).populate('listeId');
       
       if (!commande) {
@@ -465,6 +460,28 @@ export const Liste = {
       console.error('Erreur lors de la mise à jour de la commande:', error);
       throw error;
     }
+  },
+
+  // Mettre à jour les articles d'une liste par son ID (sans changer l'utilisateur ni dupliquer)
+  async mettreAJourArticlesParId(listeId, articles) {
+    try {
+      const liste = await ListeModel.findById(listeId);
+      if (!liste) {
+        throw new Error('Liste non trouvée');
+      }
+      liste.articles = articles;
+      liste.dateModification = new Date();
+      await liste.save();
+      return {
+        id: liste._id,
+        nom: liste.nom,
+        articles: liste.articles,
+        dateModification: liste.dateModification
+      };
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour des articles par ID:', error);
+      throw error;
+    }
   }
 };
 
@@ -483,4 +500,5 @@ export const initializeDatabase = async () => {
   }
 };
 
+export { ListeModel, TokenPartageModel };
 export default Liste;

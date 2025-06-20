@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { api } from '../utils/api'
+import '../styles/style-modal-partage.css'
 import { 
   XMarkIcon, 
   LinkIcon, 

@@ -27,6 +27,7 @@ export const register= async (req, res) => {
     });
 
     await user.save();
+    console.log('Utilisateur enregistrer : ',user)
 
     // Créer le token JWT
     const token = jwt.sign(
@@ -58,14 +59,16 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
 
-    // console.log('Tentative de connexion pour:', email);
-    // console.log('Utilisateur trouvé:', user ? user.email : null);
+    console.log('Tentative de connexion pour:', email);
+    console.log('Utilisateur trouvé:', user ? user.email : null);
 
     // Vérifier le mot de passe
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
+
+    console.log('Coonection réussie pour :',user ? user.email : null)
 
     // Créer le token JWT
     const token = jwt.sign(
@@ -103,11 +106,49 @@ export const getMe = async (req, res) => {
   }
 };
 
-export const logout = (req, res) => {
-  res.clearCookie('token', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict'
-  });
-  res.json({ message: 'Déconnexion réussie' });
-};
+// export const logout = (res) => {
+//   res.clearCookie('token', {
+//     httpOnly: true,
+//     secure: process.env.NODE_ENV === 'production',
+//     sameSite: 'strict'
+//   });
+//   res.json({ message: 'Déconnexion réussie' });
+// };
+
+
+export const logout = async (req, res) => {
+  try {
+    // Récupérer le token du cookie pour identifier l'utilisateur
+    const token = req.cookies.token;
+    
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const user = await User.findById(decoded.userId).select('email name');
+        
+        if (user) {
+          console.log('Déconnexion de l\'utilisateur:', user.email);
+        } else {
+          console.log('Déconnexion - utilisateur non trouvé dans la base');
+        }
+      } catch (jwtError) {
+        console.log('Déconnexion avec token invalide ou expiré');
+      }
+    } else {
+      console.log('Tentative de déconnexion sans token');
+    }
+    
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
+    
+    console.log('Cookie de session supprimé avec succès');
+    res.json({ message: 'Déconnexion réussie' });
+    
+  } catch (error) {
+    console.log('Erreur lors de la déconnexion:', error.message);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+}

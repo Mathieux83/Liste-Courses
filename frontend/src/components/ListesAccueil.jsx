@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { api } from '../utils/api'
@@ -16,7 +16,7 @@ import {
   CheckCircleIcon
 } from '@heroicons/react/24/outline'
 
-export default function ListesAccueil({ isAuthenticated, onLogout }) {
+export default function ListesAccueil({ isAuthenticated, onLogout, premierChargement, setPremierChargement }) {
   const [listes, setListes] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -34,20 +34,25 @@ export default function ListesAccueil({ isAuthenticated, onLogout }) {
       setLoading(false); // Ajoute cette ligne pour éviter le chargement infini
       return;
     }
-    chargerListes();
+    if (premierChargement) {
+      chargerListes(true);
+      setPremierChargement(false);
+    } else {
+      chargerListes(false);
+    }
   }, [isAuthenticated]);
 
-  const chargerListes = async () => {
+  const chargerListes = async (afficherToast = false) => {
     try {
       setLoading(true)
       setError('')
       const response = await api.obtenirListes()
       setListes(response.data || [])
-      toast.success('Listes chargées !')
+      if (afficherToast) toast.success('Listes chargées !')
     } catch (err) {
       if (err.response?.status === 401 && onLogout) {
-        onLogout(); // Déclenche la déconnexion globale
-        return; // Stoppe ici pour éviter d’afficher une erreur inutile
+        onLogout();
+        return;
       }
       const errorMessage = 'Erreur lors du chargement des listes';
       setError(errorMessage);
@@ -169,7 +174,7 @@ export default function ListesAccueil({ isAuthenticated, onLogout }) {
   // Loading skeleton
   if (loading) {
     return (
-      <div className="min-h-screen p-4" style={{ backgroundColor: 'var(--primary-color)' }}>
+      <div className="p-4" style={{ backgroundColor: 'var(--primary-color)' }}>
         <div className="max-w-6xl mx-auto">
           <div className="loading-skeleton" style={{ height: '3rem', marginBottom: '2rem' }}></div>
           <div className="listes-grid">
@@ -187,7 +192,7 @@ export default function ListesAccueil({ isAuthenticated, onLogout }) {
   }
 
   return (
-    <div className="min-h-screen p-4" style={{ backgroundColor: 'var(--primary-color)' }}>
+    <div className="p-4" style={{ backgroundColor: 'var(--primary-color)' }}>
       <div className="max-w-6xl mx-auto">
         
         {/* Header */}

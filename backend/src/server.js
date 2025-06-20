@@ -10,9 +10,7 @@ import listesRoutes from './routes/listes.js'
 import authRoutes from './routes/auth.js'
 import notificationsRoutes from './routes/notifications.js'
 import deliveryRoutes from './routes/delivery.js'
-import { initializeDatabase } from './models/Liste.js'
 import { initializeSocketIO } from './socket.js'
-import User from './models/User.js'
 import mongoose from 'mongoose'
 import cookieParser from 'cookie-parser'
 
@@ -35,7 +33,7 @@ app.use(helmet({
 // Limitation du taux de requêtes
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limite à 100 requêtes par IP
+  max: 1000, // Limite à 100 requêtes par IP
   message: 'Trop de requêtes depuis cette IP, veuillez réessayer plus tard.'
 })
 app.use('/api/', limiter)
@@ -63,6 +61,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/listes', listesRoutes)
 app.use('/api/notifications', notificationsRoutes)
 app.use('/api/delivery', deliveryRoutes)
+// api.use('/api/offline', offlineRoutes)
 
 // Route de test
 app.get('/api/health', (req, res) => {

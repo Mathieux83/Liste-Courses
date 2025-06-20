@@ -11,8 +11,11 @@ const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 10000,
-  withCredentials: true
+  withCredentials: true // Toujours envoyer les cookies
 })
+
+// Force l'utilisation des credentials sur toutes les requêtes axios globalement
+// axios.defaults.withCredentials = true
 
 // // Intercepteur pour ajouter le token aux requêtes
 // apiClient.interceptors.request.use(
@@ -72,11 +75,26 @@ export const api = {
     }
   },
 
-  // Sauvegarder la liste
+  // Obtenir une liste par son id
+  obtenirListeParId: async (id) => {
+    try {
+      const response = await apiClient.get(`/listes/${id}`)
+      return response.data
+    } catch (error) {
+      throw error
+    }
+  },
+
+  // Sauvegarder la liste (PUT si id, POST sinon)
   sauvegarderListe: async (listeData) => {
     try {
-      const response = await apiClient.post('/listes', listeData)
-      return response.data
+      if (listeData.id) {
+        const response = await apiClient.put(`/listes/${listeData.id}`, listeData)
+        return response.data
+      } else {
+        const response = await apiClient.post('/listes', listeData)
+        return response.data
+      }
     } catch (error) {
       throw error
     }
