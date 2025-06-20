@@ -1,0 +1,221 @@
+/* src/styles/Donation.css */
+/* =====================
+   Donation Page Styles
+   ===================== */
+.donation-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 2cm auto 0 auto; /* Décalage total de 8cm vers le bas */
+    padding: 2.5rem 0.5rem 2.5rem 0.5rem;
+    max-width: 1200px;
+    background: var(--primary-light);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(136, 192, 208, 0.10);
+    color: var(--text-light);
+    animation: fadeIn 0.5s;
+    box-sizing: border-box;
+    position: relative; /* Pour positionner le bouton accueil en absolu */
+}
+
+/* =====================
+   Title
+   ===================== */
+.donation-title {
+    display: flex;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 1rem 0 0 0; /* Supprime l'espace sous le titre */
+    padding: 0;
+}
+
+/* Ajout du texte informatif sous le titre et au-dessus du bouton */
+
+.btn-accueil-in-donation {
+    position: absolute;
+    top: -2cm; /* Réhausse de 2cm au-dessus du bloc gris */
+    left: 2rem;
+    z-index: 2;
+}
+
+/* =====================
+   Donation Info
+   ===================== */
+.donation-info {
+    width: 100%;
+    max-width: 900px;
+    /* margin: 1rem auto 0 auto; Réduit l'espace au-dessus */
+    text-align: center;
+    color: var(--text-light);
+    font-size: 1.2rem;
+    opacity: 0.85;
+    margin-bottom: -0.5rem; /* Réduit l'espace sous le texte */
+    margin-bottom: -2rem;
+}
+
+/* =====================
+   Section Container
+   ===================== */
+.donation-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 1100px; /* Limite la largeur pour éviter que les cards dépassent */
+    margin: 0 auto;
+    margin-bottom: -2rem;
+    padding: 0 1rem 2rem 1rem;
+    box-sizing: border-box;
+}
+
+/* =====================
+   Liberapay Widget
+   ===================== */
+.liberapay-widget {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    background: none;
+    border: none;
+    box-shadow: none;
+    /* margin-bottom: 1rem; */
+    transform: scale(1.1);
+}
+.liberapay-widget a {
+    display: inline-block;
+    background: #f6c915;
+    border: 2px solid var(--accent-color);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(191, 97, 106, 0.13);
+    padding: 0.3em 1.2em;
+    transition: box-shadow 0.2s, border 0.2s, transform 0.2s;
+    text-align: center;
+    color: #222;
+    font-weight: 600;
+    text-decoration: none;
+}
+.liberapay-widget a:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 6px 18px rgba(191, 97, 106, 0.18);
+    transform: translateY(-2px) scale(1.04);
+}
+
+/* =====================
+   Stripe Cards
+   ===================== */
+.stripe-cards {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 1.8rem;
+    flex-wrap: nowrap;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 0 2rem 0;
+}
+
+.stripe-card {
+    background: var(--primary-color);
+    border: 2px solid var(--secondary-color);
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(136, 192, 208, 0.13);
+    padding: 2rem 1.2rem 1.2rem 1.2rem;
+    width: 350px; /* Largeur augmentée pour être cohérente avec les boutons */
+    min-width: 320px;
+    max-width: 370px;
+    margin: 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    transition: box-shadow 0.2s, border 0.2s, transform 0.2s;
+    position: relative;
+    background-clip: padding-box;
+}
+.stripe-card:hover {
+    border-color: var(--accent-color);
+    box-shadow: 0 12px 36px rgba(191, 97, 106, 0.18);
+    transform: translateY(-4px) scale(1.03);
+}
+.stripe-card h3 {
+    color: var(--accent-color);
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(136,192,208,0.08);
+}
+
+/* =====================
+   Responsive Design
+   ===================== */
+@media (max-width: 1100px) {
+    .donation-page {
+        padding: 1rem 0.5rem;
+    }
+    .stripe-cards {
+        flex-wrap: wrap;
+        gap: 1.2rem;
+        max-width: 98vw;
+    }
+    .stripe-card {
+        width: 95vw;
+        min-width: unset;
+        max-width: 98vw;
+    }
+}
+@media (max-width: 900px) {
+    .stripe-cards {
+        gap: 0.7rem;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+@media (max-width: 600px) {
+    .donation-section {
+        gap: 1.2rem;
+    }
+    .stripe-cards {
+        flex-direction: column;
+        align-items: center;
+        flex-wrap: nowrap;
+        align-items: stretch; /* Toujours aligner en colonne */
+    }
+    .stripe-card,
+    .liberapay-widget {
+        min-width: 90vw;
+        max-width: 98vw;
+        padding: 1.2rem 0.5rem;
+        flex: unset;
+    }
+}
+@media (max-width: 1000px) {
+    .stripe-cards {
+        flex-wrap: wrap;
+        gap: 1.2rem;
+        max-width: 98vw;
+    }
+    .stripe-card {
+        width: 90vw;
+        min-width: unset;
+        max-width: 98vw;
+    }
+}
+
+/* =====================
+   Animation
+   ===================== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import ListeCourses from './components/ListeCourses'
-import ListePartagee from './components/ListePartage'
-import Login from './components/Login'
-import Register from './components/Register'
-import ListesAccueil from './components/ListesAccueil'
+import ListeCourses from './pages/ListeCourses'
+import ListePartagee from './pages/ListePartage'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import ListesAccueil from './pages/ListesAccueil'
 import LogoutButton from './components/LogoutButton'
 import { BouttonAccueil } from './components/BouttonAccueil'
+import DonationsPage from './pages/DonationsPage'
 import axios from 'axios'
 
 function App() {
@@ -17,6 +18,8 @@ function App() {
 
   // Pour afficher le bouton accueil uniquement sur /liste/:id
   const matchListe = /^\/liste\/[^/]+$/.test(location.pathname);
+
+ 
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -70,6 +73,7 @@ function App() {
         <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />
         <Route path="/accueil" element={isAuthenticated ? <ListesAccueil isAuthenticated={isAuthenticated} onLogout={() => setIsAuthenticated(false)} premierChargement={premierChargement} setPremierChargement={setPremierChargement} /> : <Navigate to="/" />} />
         <Route path="/liste-partagee/:token" element={<ListePartagee />} />
+        <Route path="/donations" element={<DonationsPage />} />
 
         {/* Routes protégées */}
         <Route path="/" element={

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { api } from '../utils/api'
 import '../styles/style-liste-accueil.css';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 
 import { 
   PlusIcon, 
@@ -28,6 +30,7 @@ export default function ListesAccueil({ isAuthenticated, onLogout, premierCharge
   const [creationLoading, setCreationLoading] = useState(false)
   const [filtreActif, setFiltreActif] = useState('toutes') // toutes, recentes, partagees
   const [recherche, setRecherche] = useState('')
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -508,6 +511,15 @@ export default function ListesAccueil({ isAuthenticated, onLogout, premierCharge
             </div>
           </div>
         )}
+      </div>
+      {/* Bouton Soutenez-nous en bas de page */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem', marginBottom: '1rem' }}>
+        <button
+          onClick={() => navigate('/donations', { state: { via: 'ListeAccueil' } })}
+          className="btn-primary"
+        >
+          Soutenez-nous
+        </button>
       </div>
     </div>
   )

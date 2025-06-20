@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
-import ModalPartage from './ModalPartage'
+import ModalPartage from '../components/ModalPartage'
 import { api } from '../utils/api'
 import { exporterPDF, capturerEcran, imprimerListe } from '../utils/exportUtils'
 import { PlusIcon, TrashIcon, ShareIcon, PrinterIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline'
