@@ -1,0 +1,27 @@
+/* Styles du bouton Accueil extraits des autres fichiers CSS */
+
+.btn-accueil-style {
+  background: var(--secondary-dark);
+  color: white;
+  border: 1px solid var(--secondary-color);
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 600;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-accueil-style:hover {
+  transform: scale(1.05);
+}
+
+.btn-accueil-donation {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  margin-left: 3rem;
+  margin-top: -0.5rem;
+  position: relative;
+  /* z-index: 10; */
+}

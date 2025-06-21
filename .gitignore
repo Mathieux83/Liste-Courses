@@ -1,8 +1,8 @@
-/backend/node_modules
-/backend/.env
-/backend/database.sqlite
+/server/node_modules
+/server/.env
+/server/database.sqlite
 
-/frontend/node_modules
-/frontend/.env
+/client/node_modules
+/client/.env
 /Structure.txt
 test.html

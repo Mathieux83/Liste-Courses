@@ -20,13 +20,13 @@ const handleValidation = (req, res, next) => {
 router.use(auth)
 
 // Obtenir toutes les listes de l'utilisateur
-router.get('/', listeController.getListes)
+router.get('/dashboard', listeController.getListes)
 
 // Obtenir la liste principale (doit être AVANT la route dynamique)
 router.get('/principale', listeController.obtenirPrincipale)
 
 // Créer une nouvelle liste
-router.post('/', listeController.creerListe)
+router.post('/dashboard/newliste', listeController.creerListe)
 
 // Obtenir une liste spécifique
 router.get('/:id', listeController.getListe)

@@ -4,8 +4,7 @@ import ListeCourses from './pages/ListeCourses'
 import ListePartagee from './pages/ListePartage'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import ListesAccueil from './pages/ListesAccueil'
-import LogoutButton from './components/LogoutButton'
+import Dashboard from './pages/Dashboard'
 import { BouttonAccueil } from './components/BouttonAccueil'
 import DonationsPage from './pages/DonationsPage'
 import axios from 'axios'
@@ -52,34 +51,17 @@ function App() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--primary-color)' }}>
-      {/* Header visible sur toutes les pages privées */}
-      {isAuthenticated && (
-        <div className="w-full flex items-center justify-between px-6" style={{ minHeight: 0, marginBottom: 0 }}>
-          {/* Colonne gauche vide */}
-          <div style={{ flex: 1 }} />
-          {/* Colonne centrale : bouton accueil centré uniquement sur /liste/:id */}
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-            {matchListe && <BouttonAccueil />}
-          </div>
-          {/* Colonne droite : bouton logout */}
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
-            <LogoutButton onLogout={() => setIsAuthenticated(false)}/>
-          </div>
-        </div>
-      )}
       <Routes>
         {/* Routes publiques */}
         <Route path="/login" element={!isAuthenticated ? <Login onLogin={() => setIsAuthenticated(true)} /> : <Navigate to="/" />} />
         <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />
-        <Route path="/accueil" element={isAuthenticated ? <ListesAccueil isAuthenticated={isAuthenticated} onLogout={() => setIsAuthenticated(false)} premierChargement={premierChargement} setPremierChargement={setPremierChargement} /> : <Navigate to="/" />} />
+        <Route path="/dashboard" element={isAuthenticated ? <Dashboard isAuthenticated={isAuthenticated} onLogout={() => setIsAuthenticated(false)} premierChargement={premierChargement} setPremierChargement={setPremierChargement} /> : <Navigate to="/" />} />
         <Route path="/liste-partagee/:token" element={<ListePartagee />} />
         <Route path="/donations" element={<DonationsPage />} />
 
         {/* Routes protégées */}
         <Route path="/" element={
-          <PrivateRoute>
-            <ListesAccueil isAuthenticated={isAuthenticated} onLogout={() => setIsAuthenticated(false)} premierChargement={premierChargement} setPremierChargement={setPremierChargement} />
-          </PrivateRoute>
+          isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
         } />
         <Route path="/liste/:id" element={
           <PrivateRoute>

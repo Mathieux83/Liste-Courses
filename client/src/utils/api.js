@@ -2,9 +2,6 @@ import axios from 'axios'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL
 
-// Configuration axios avec authentification
-// import authService from './authService'
-
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -46,7 +43,7 @@ export const api = {
 
     obtenirListes: async () => {
     try {
-      const response = await apiClient.get('/listes')
+      const response = await apiClient.get('/listes/dashboard')
       return response
     } catch (error) {
       throw error

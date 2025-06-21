@@ -1,0 +1,14 @@
+/* Styles spécifiques pour ListePartage */
+.shared-list-indicator {
+  background-color: rgba(136, 192, 208, 0.1);
+  border: 1px solid var(--secondary-color);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+.sync-indicator {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  color: rgba(236, 239, 244, 0.6);
+}
+/* ...autres styles propres à ListePartage... */

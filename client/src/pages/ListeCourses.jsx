@@ -6,6 +6,10 @@ import { api } from '../utils/api'
 import { exporterPDF, capturerEcran, imprimerListe } from '../utils/exportUtils'
 import { PlusIcon, TrashIcon, ShareIcon, PrinterIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline'
 import '../styles/style-liste-courses.css'
+import LogoutButton from '../components/LogoutButton'
+// Au cas ou 
+import '../styles/index.css' 
+import { BouttonAccueil } from '../components/BouttonAccueil'
 
 const ListeCourses = () => {
   const { id } = useParams()
@@ -129,7 +133,14 @@ const ListeCourses = () => {
 
   return (
     <>
+
       <div className="liste-container">
+        <div className="btn-accueil">
+          <BouttonAccueil/>
+        </div>
+        <div className="btn-logout-liste">
+        <LogoutButton />
+        </div>
         {/* Header avec titre et actions */}
         <div className="liste-header">
           <input
@@ -148,13 +159,13 @@ const ListeCourses = () => {
           />
           
           {/* Boutons d'actions */}
-          <div className="flex justify-center gap-3 mt-4 flex-wrap">
+          <div className="flex justify-center gap-3 mt-4 flex-wrap ">
             <button
               onClick={() => setModalPartageOuvert(true)}
               className="btn-primary"
               disabled={!listeId}
             >
-              <ShareIcon className="w-5 h-5 inline mr-2" />
+              <ShareIcon className="w-5 h-5 inline mr-2 mb-1 mt-0.5" />
               Partager
             </button>
             
@@ -162,7 +173,7 @@ const ListeCourses = () => {
               onClick={() => exporterPDF(articles, nomListe)}
               className="btn-secondary"
             >
-              <DocumentArrowDownIcon className="w-5 h-5 inline mr-2" />
+              <DocumentArrowDownIcon className="w-5 h-5 inline mr-2 mb-1 mt-0.5" />
               Exporter PDF
             </button>
             
@@ -170,7 +181,7 @@ const ListeCourses = () => {
               onClick={() => imprimerListe(articles, nomListe)}
               className="btn-secondary"
             >
-              <PrinterIcon className="w-5 h-5 inline mr-2" />
+              <PrinterIcon className="w-5 h-5 inline mr-2 mb-1 mt-0.5" />
               Imprimer
             </button>
           </div>

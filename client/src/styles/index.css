@@ -109,21 +109,9 @@
   }
 }
 
-/* Composants personnalisés - Application 60-30-10 */
+/* Composants globaux et utilitaires conservés */
 @layer components {
   /* Boutons primaires - 10% accent */
-   .btn-accueil {
-    width: fit-content;
-    display: flex;
-    justify-content: center;
-    transition: all 0.2s ease;
-  }
-  
-  .btn-accueil:hover {
-    transform: translateY(-2px);
-    transform: scale(1.04);
-  }
-
   .btn-primary {
     @apply font-medium py-2 px-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
     background-color: var(--accent-color);
@@ -248,30 +236,8 @@
   animation: slideDown 0.3s ease;
 }
 
-/* Classes utilitaires spécifiques aux listes */
-@layer components {
-  /* Items de liste - 60% fond avec hover 30% */
-  .liste-item {
-    @apply flex items-center justify-between p-4 transition-all duration-200;
-    background-color: var(--primary-light); /* 60% variation */
-    border-bottom: 1px solid var(--secondary-color); /* 30% */
-    color: var(--text-light);
-  }
-
-  .liste-item:hover {
-    background-color: var(--secondary-dark); /* 30% au hover */
-  }
-
-  .liste-item-checked {
-    background-color: var(--primary-dark); /* 60% plus foncé */
-    opacity: 0.75;
-  }
-
-  .liste-item-checked .liste-item-text {
-    @apply line-through;
-    color: rgba(236, 239, 244, 0.6);
-  }
-}
+/* Styles spécifiques déplacés dans leurs fichiers dédiés */
+/* .liste-item, .liste-item-checked, .liste-item-checked .liste-item-text, .modal-overlay, .modal-content, .modal-title, .share-buttons, .share-btn, .share-link-input, .listes-accueil-*, .controles-*, .recherche-*, .filtre-btn, .nouvelle-liste-btn, .listes-grid, .liste-card, .badge-partagee, .shared-list-indicator, .sync-indicator, etc. sont maintenant dans leurs fichiers CSS respectifs. */
 
 /* Styles pour le mode hors ligne */
 .offline-indicator {

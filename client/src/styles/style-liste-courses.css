@@ -1,0 +1,23 @@
+
+.liste-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  transition: all 0.2s;
+  background-color: var(--primary-light);
+  border-bottom: 1px solid var(--secondary-color);
+  color: var(--text-light);
+}
+.liste-item:hover {
+  background-color: var(--secondary-dark);
+}
+.liste-item-checked {
+  background-color: var(--primary-dark);
+  opacity: 0.75;
+}
+.liste-item-checked .liste-item-text {
+  text-decoration: line-through;
+  color: rgba(236, 239, 244, 0.6);
+}
+/* ...autres styles propres à ListeCourses... */

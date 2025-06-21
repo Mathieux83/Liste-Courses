@@ -1,5 +1,8 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import authService from '../utils/authService';
+import '../styles/BoutonLogout.css';
+import { ArrowLeftEndOnRectangleIcon } from '@heroicons/react/24/outline';
+
 
 export default function LogoutButton() {
   const navigate = useNavigate();
@@ -18,17 +21,9 @@ export default function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      style={{
-        marginTop: '1rem',
-        background: 'var(--accent-color)',
-        color: 'white',
-        borderRadius: 6,
-        padding: '0.5rem 1.2rem',
-        fontWeight: 600,
-        cursor: 'pointer',
-        zIndex: 1000
-      }}
+      className="btn-logout-style"
     >
+      <ArrowLeftEndOnRectangleIcon className="w-6 h-6 inline mr-2 mb-0.5"/>
       Se déconnecter
     </button>
   );
