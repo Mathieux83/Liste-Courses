@@ -3,6 +3,7 @@ import { TokenPartageModel } from '../models/Liste.js';
 // Middleware pour vérifier le token de partage dans l'URL
 export default async function verifTokenPartage(req, res, next) {
   const { token } = req.params;
+  console.log('Token reçu dans l\'URL :', token);
   if (!token) {
     return res.status(401).json({ message: 'Token de partage manquant' });
   }
@@ -12,6 +13,7 @@ export default async function verifTokenPartage(req, res, next) {
       token,
       dateExpiration: { $gt: new Date() }
     }).populate('listeId');
+    console.log('Résultat recherche tokenPartage :', tokenPartage);
 
     if (!tokenPartage || !tokenPartage.listeId) {
       return res.status(401).json({ message: 'Token de partage invalide ou expiré' });

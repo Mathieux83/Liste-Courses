@@ -19,9 +19,17 @@
 .btn-accueil-donation {
   display: flex;
   justify-content: flex-start;
-  width: 100%;
-  margin-left: 3rem;
+  /* width: 170%; */
+  margin-right: -2.5rem;
   margin-top: -0.5rem;
   position: relative;
   /* z-index: 10; */
 }
+
+.btn-accueil-liste {
+  /* display: flex;
+  justify-content: flex-start; */
+  padding-top: 1.5rem;
+  /* padding-left: 1.5rem; */
+}
+

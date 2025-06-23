@@ -4,12 +4,12 @@ import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import dotenv from 'dotenv'
 import { fileURLToPath } from 'url'
-import { dirname, join } from 'path'
-import { createServer } from 'http'
+import { dirname } from 'path'
 import listesRoutes from './routes/listes.js'
 import authRoutes from './routes/auth.js'
 import notificationsRoutes from './routes/notifications.js'
 import deliveryRoutes from './routes/delivery.js'
+import resetPasswordRoutes from './routes/reset-password.js'
 import { initializeSocketIO } from './socket.js'
 import mongoose from 'mongoose'
 import cookieParser from 'cookie-parser'
@@ -61,7 +61,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/listes', listesRoutes)
 app.use('/api/notifications', notificationsRoutes)
 app.use('/api/delivery', deliveryRoutes)
-// api.use('/api/offline', offlineRoutes)
+app.use('/api/reset-password', resetPasswordRoutes)
 
 // Route de test
 app.get('/api/health', (req, res) => {

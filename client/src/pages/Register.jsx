@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import authService from '../utils/authService'
+import NProgress from 'nprogress';
 import { 
   UserPlusIcon, 
   UserIcon, 
@@ -11,7 +12,8 @@ import {
   EyeSlashIcon,
   CheckCircleIcon,
   XCircleIcon 
-} from '@heroicons/react/24/outline'
+} from '@heroicons/react/24/solid'
+import '../styles/register.css';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -128,6 +130,17 @@ export default function Register() {
     }
   }
 
+  React.useEffect(() => {
+    if (loading) {
+      NProgress.start();
+    } else {
+      NProgress.done();
+    }
+    return () => {
+      NProgress.done();
+    };
+  }, [loading]);
+
   const PasswordCriterion = ({ met, text }) => (
     <div className="flex items-center space-x-2 text-sm">
       {met ? (
@@ -140,6 +153,10 @@ export default function Register() {
       </span>
     </div>
   )
+
+  if (loading) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4" 

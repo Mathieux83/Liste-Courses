@@ -3,21 +3,22 @@ import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { api } from '../utils/api'
 import '../styles/style-liste-accueil.css';
-import React from 'react';
-import { Navigate } from 'react-router-dom';
 import LogoutButton from '../components/LogoutButton';
+import NProgress from 'nprogress';
+import { BoutonDons } from '../components/BoutonDons';
 
 import { 
   PlusIcon, 
-  TrashIcon, 
+  TrashIcon,
   EyeIcon,
   ShareIcon,
   CalendarIcon,
   ShoppingCartIcon,
   DocumentTextIcon,
   XMarkIcon,
-  CheckCircleIcon
-} from '@heroicons/react/24/outline'
+  CheckCircleIcon,
+  DocumentDuplicateIcon
+} from '@heroicons/react/24/solid'
 
 export default function Dashboard({ isAuthenticated, onLogout, premierChargement, setPremierChargement }) {
   const [listes, setListes] = useState([])
@@ -45,6 +46,17 @@ export default function Dashboard({ isAuthenticated, onLogout, premierChargement
       chargerListes(false);
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (loading) {
+      NProgress.start();
+    } else {
+      NProgress.done();
+    }
+    return () => {
+      NProgress.done();
+    };
+  }, [loading]);
 
   const chargerListes = async (afficherToast = false) => {
     try {
@@ -177,22 +189,7 @@ export default function Dashboard({ isAuthenticated, onLogout, premierChargement
 
   // Loading skeleton
   if (loading) {
-    return (
-      <div className="p-4" style={{ backgroundColor: 'var(--primary-color)' }}>
-        <div className="max-w-6xl mx-auto">
-          <div className="loading-skeleton" style={{ height: '3rem', marginBottom: '2rem' }}></div>
-          <div className="listes-grid">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="card">
-                <div className="loading-skeleton" style={{ height: '1.5rem', marginBottom: '1rem' }}></div>
-                <div className="loading-skeleton" style={{ height: '1rem', marginBottom: '0.5rem' }}></div>
-                <div className="loading-skeleton" style={{ height: '1rem' }}></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    )
+    return null;
   }
 
   return (
@@ -200,9 +197,19 @@ export default function Dashboard({ isAuthenticated, onLogout, premierChargement
       <div className="btn-logout-dashboard">
         <LogoutButton />
       </div>
+      <div style={{display: 'flex', justifyContent: 'center'}}>
+        <div className='-mt-10 mb-7' style={{display: 'flex', justifyContent: 'center', fontSize: '4.5rem', fontWeight: 600, color: 'var(--secondary-color)'}}>
+          <h4>List</h4>
+        </div>
+        <div className='-mt-10 mb-7' style={{display: 'flex', justifyContent: 'center', fontSize: '4.5rem', fontWeight: 600, color: 'var(--text-light)'}}>
+          <h4>M</h4>
+        </div>
+        <div className='-mt-10 mb-7' style={{display: 'flex', justifyContent: 'center', fontSize: '4.5rem', fontWeight: 600, color: 'var(--accent-color)'}}>
+          <h4>e</h4>
+        </div>
+      </div>
       <div className="p-4" style={{ backgroundColor: 'var(--primary-color)' }}>
         <div className="max-w-6xl mx-auto">
-          
           {/* Header */}
           <div className="mb-8">
             <div className="text-center mb-6">
@@ -225,7 +232,7 @@ export default function Dashboard({ isAuthenticated, onLogout, premierChargement
                     placeholder="Rechercher une liste..."
                     value={recherche}
                     onChange={(e) => setRecherche(e.target.value)}
-                    className="input"
+                    className="recherche-input"
                   />
                 </div>
 
@@ -241,14 +248,14 @@ export default function Dashboard({ isAuthenticated, onLogout, premierChargement
                     onClick={() => setFiltreActif('recentes')}
                     className={filtreActif === 'recentes' ? 'btn-primary' : 'btn-secondary'}
                   >
-                    <CalendarIcon className="w-4 h-4 inline mr-1" />
+                    <CalendarIcon className="w-4 h-4 inline mr-1 mb-1" />
                     Récentes
                   </button>
                   <button
                     onClick={() => setFiltreActif('partagees')}
                     className={filtreActif === 'partagees' ? 'btn-primary' : 'btn-secondary'}
                   >
-                    <ShareIcon className="w-4 h-4 inline mr-1" />
+                    <ShareIcon className="w-4 h-4 inline mr-1 mb-1" />
                     Partagées
                   </button>
                 </div>
@@ -258,7 +265,7 @@ export default function Dashboard({ isAuthenticated, onLogout, premierChargement
                   onClick={() => setShowModal(true)}
                   className="btn-primary"
                 >
-                  <PlusIcon className="w-5 h-5 inline mr-2" />
+                  <PlusIcon className="w-5 h-5 inline mr-2 mb-1" />
                   Nouvelle Liste
                 </button>
               </div>
@@ -312,7 +319,7 @@ export default function Dashboard({ isAuthenticated, onLogout, premierChargement
                     onClick={() => setShowModal(true)}
                     className="btn-primary"
                   >
-                    <PlusIcon className="w-5 h-5 inline mr-2" />
+                    <PlusIcon className="w-5 h-5 inline mr-2 mb-1" />
                     Créer ma première liste
                   </button>
                 </>
@@ -398,7 +405,7 @@ export default function Dashboard({ isAuthenticated, onLogout, premierChargement
                         to={`/liste/${liste.id}`}
                         className="btn-primary flex-1 text-center"
                       >
-                        <EyeIcon className="w-4 h-4 inline mr-2" />
+                        <EyeIcon className="w-4 h-4 inline mr-2 mb-0.5" />
                         Ouvrir
                       </Link>
                       
@@ -407,7 +414,7 @@ export default function Dashboard({ isAuthenticated, onLogout, premierChargement
                         className="btn-secondary"
                         title="Dupliquer"
                       >
-                        <DocumentTextIcon className="w-4 h-4" />
+                        <DocumentDuplicateIcon className="w-4 h-4" />
                       </button>
                       
                       <button
@@ -431,7 +438,8 @@ export default function Dashboard({ isAuthenticated, onLogout, premierChargement
                 {/* Header du modal */}
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="modal-title">
-                    <PlusIcon className="w-6 h-6 inline mr-2" />
+                    <PlusIcon className="w-6 h-6 inline mr-2 mb-1" />
+                    
                     Nouvelle Liste de Courses
                   </h2>
                   <button
@@ -444,7 +452,7 @@ export default function Dashboard({ isAuthenticated, onLogout, premierChargement
                 </div>
 
                 {/* Formulaire */}
-                <form onSubmit={creerNouvelleListe} className="space-y-6">
+                <form onSubmit={creerNouvelleListe} className="space-y-6 ">
                   <div>
                     <label htmlFor="nom" className="block text-sm font-medium mb-2" 
                            style={{ color: 'var(--secondary-color)' }}>
@@ -460,7 +468,7 @@ export default function Dashboard({ isAuthenticated, onLogout, premierChargement
                         nom: e.target.value
                       })}
                       placeholder="Ex: Courses du weekend"
-                      className="input"
+                      className="new-form-input"
                       maxLength={100}
                     />
                   </div>
@@ -478,7 +486,7 @@ export default function Dashboard({ isAuthenticated, onLogout, premierChargement
                         description: e.target.value
                       })}
                       placeholder="Décrivez votre liste..."
-                      className="input resize-none"
+                      className="input resize-none new-form-input"
                       rows={3}
                       maxLength={500}
                     />
@@ -506,7 +514,7 @@ export default function Dashboard({ isAuthenticated, onLogout, premierChargement
                         </>
                       ) : (
                         <>
-                          <PlusIcon className="w-4 h-4 inline mr-2" />
+                          <PlusIcon className="w-4 h-4 inline mr-2 mb-0.5" />
                           Créer la liste
                         </>
                       )}
@@ -518,15 +526,11 @@ export default function Dashboard({ isAuthenticated, onLogout, premierChargement
           )}
         </div>
         {/* Bouton Soutenez-nous en bas de page */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem', marginBottom: '1rem' }}>
-          <button
-            onClick={() => navigate('/donations', { state: { via: 'ListeAccueil' } })}
-            className="btn-primary"
-          >
-            Soutenez-nous
-          </button>
-        </div>
+
       </div>
+        <div style={{ position: 'fixed', left: '50%', transform: 'translateX(-50%)', zIndex: 1000, bottom: '2rem', display: 'flex', justifyContent: 'center'}}>
+        <BoutonDons/>
+        </div>
     </>
   )
 }

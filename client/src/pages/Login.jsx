@@ -2,13 +2,15 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import authService from '../utils/authService'
+import NProgress from 'nprogress';
 import { 
   EyeIcon, 
   EyeSlashIcon, 
   UserIcon, 
   LockClosedIcon,
   ArrowRightOnRectangleIcon 
-} from '@heroicons/react/24/outline'
+} from '@heroicons/react/24/solid'
+import '../styles/login.css';
 
 export default function Login({ onLogin}) {
   const [formData, setFormData] = useState({
@@ -83,6 +85,21 @@ export default function Login({ onLogin}) {
     if (e.key === 'Enter' && !loading) {
       handleSubmit(e)
     }
+  }
+
+  React.useEffect(() => {
+    if (loading) {
+      NProgress.start();
+    } else {
+      NProgress.done();
+    }
+    return () => {
+      NProgress.done();
+    };
+  }, [loading]);
+
+  if (loading) {
+    return null;
   }
 
   return (

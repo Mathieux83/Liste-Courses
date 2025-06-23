@@ -13,10 +13,13 @@ import {
   HomeIcon,
   ExclamationTriangleIcon,
   ClockIcon
-} from '@heroicons/react/24/outline'
+} from '@heroicons/react/24/solid'
+import NProgress from 'nprogress';
+import { BouttonAccueil } from '../components/BouttonAccueil'
 
 export default function ListePartage() {
   const { token } = useParams()
+  console.log('Token récupéré via useParams :', token)
   const [liste, setListe] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -25,6 +28,17 @@ export default function ListePartage() {
   useEffect(() => {
     chargerListePartagee()
   }, [token])
+
+  useEffect(() => {
+    if (loading) {
+      NProgress.start();
+    } else {
+      NProgress.done();
+    }
+    return () => {
+      NProgress.done();
+    };
+  }, [loading]);
 
   const chargerListePartagee = async () => {
     try {
@@ -115,62 +129,46 @@ export default function ListePartage() {
 
   // État de chargement
   if (loading) {
-    return (
-      <div className="p-4" style={{ backgroundColor: 'var(--primary-color)' }}>
-        <div className="max-w-4xl mx-auto">
-          <div className="card mb-6">
-            <div className="loading-skeleton" style={{ height: '2.5rem', marginBottom: '1rem' }}></div>
-            <div className="loading-skeleton" style={{ height: '1rem', marginBottom: '0.5rem' }}></div>
-            <div className="loading-skeleton" style={{ height: '1rem', width: '60%' }}></div>
-          </div>
-          
-          <div className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="card">
-                <div className="loading-skeleton" style={{ height: '1.5rem', marginBottom: '0.5rem' }}></div>
-                <div className="loading-skeleton" style={{ height: '1rem', width: '40%' }}></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    )
+    return null;
   }
 
   // État d'erreur
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4" 
-           style={{ backgroundColor: 'var(--primary-color)' }}>
-        <div className="card text-center max-w-lg">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" 
-               style={{ backgroundColor: 'rgba(191, 97, 106, 0.1)' }}>
-            <XCircleIcon className="w-8 h-8" style={{ color: 'var(--accent-color)' }} />
-          </div>
-          
-          <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--accent-color)' }}>
-            Erreur de chargement
-          </h2>
-          
-          <p className="mb-6" style={{ color: 'rgba(236, 239, 244, 0.8)' }}>
-            {error}
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <button
-              onClick={chargerListePartagee}
-              className="btn-primary"
-            >
-              Réessayer
-            </button>
+      <>
+
+        <div className="min-h-screen flex items-center justify-center p-4" 
+            style={{ backgroundColor: 'var(--primary-color)' }}>
+          <div className="card text-center max-w-lg">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" 
+                style={{ backgroundColor: 'rgba(191, 97, 106, 0.1)' }}>
+              <XCircleIcon className="w-8 h-8" style={{ color: 'var(--accent-color)' }} />
+            </div>
             
-            <Link to="/" className="btn-secondary">
-              <HomeIcon className="w-5 h-5 inline mr-2" />
-              Retour à l'accueil
-            </Link>
+            <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--accent-color)' }}>
+              Erreur de chargement
+            </h2>
+            
+            <p className="mb-6" style={{ color: 'rgba(236, 239, 244, 0.8)' }}>
+              {error}
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={chargerListePartagee}
+                className="btn-primary"
+              >
+                Réessayer
+              </button>
+              
+
+            </div>
+          </div>
+          <div>
+          <BouttonAccueil/>
           </div>
         </div>
-      </div>
+      </>
     )
   }
 
@@ -185,10 +183,7 @@ export default function ListePartage() {
           
           {/* Bouton retour */}
           <div className="mb-6">
-            <Link to="/" className="btn-secondary">
-              <HomeIcon className="w-5 h-5 inline mr-2" />
-              Retour à l'accueil
-            </Link>
+            <BouttonAccueil/>
           </div>
 
           {/* Header de la liste partagée */}
@@ -196,7 +191,7 @@ export default function ListePartage() {
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
                 <div className="flex items-center mb-2">
-                  <ShareIcon className="w-6 h-6 mr-3" style={{ color: 'var(--secondary-color)' }} />
+                  <ShareIcon className="w-6 h-6 mr-3 mt-1.5" style={{ color: 'var(--secondary-color)' }} />
                   <h1 className="text-3xl font-bold" style={{ color: 'var(--secondary-color)' }}>
                     {liste.nom}
                   </h1>
@@ -209,8 +204,8 @@ export default function ListePartage() {
                 )}
               </div>
               
-              <div className="badge-primary">
-                <EyeIcon className="w-4 h-4 inline mr-1" />
+              <div className="badge-primary" style={{ borderRadius: '1.5rem', padding: '0.5rem'}}>
+                <EyeIcon className="w-5 h-5 inline mr-1 mb-0.5" />
                 Vue partagée
               </div>
             </div>
@@ -221,7 +216,7 @@ export default function ListePartage() {
               border: '1px solid var(--secondary-color)'
             }}>
               <div className="flex items-start space-x-3">
-                <ExclamationTriangleIcon className="w-5 h-5 mt-0.5" style={{ color: 'var(--secondary-color)' }} />
+                <ExclamationTriangleIcon className="w-7 h-7 mt-0.5" style={{ color: 'var(--warning-color)' }} />
                 <div>
                   <h3 className="font-semibold mb-1" style={{ color: 'var(--secondary-color)' }}>
                     Mode lecture partagée
@@ -237,21 +232,21 @@ export default function ListePartage() {
             {/* Métadonnées */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               <div className="flex items-center">
-                <DocumentTextIcon className="w-4 h-4 mr-2" style={{ color: 'var(--secondary-color)' }} />
+                <DocumentTextIcon className="w-5 h-5 mr-2" style={{ color: 'var(--secondary-color)' }} />
                 <span style={{ color: 'rgba(236, 239, 244, 0.7)' }}>
                   {liste.articles.length} article{liste.articles.length > 1 ? 's' : ''}
                 </span>
               </div>
               
               <div className="flex items-center">
-                <CalendarIcon className="w-4 h-4 mr-2" style={{ color: 'var(--secondary-color)' }} />
+                <CalendarIcon className="w-5 h-5 mr-2" style={{ color: 'var(--secondary-color)' }} />
                 <span style={{ color: 'rgba(236, 239, 244, 0.7)' }}>
                   Modifiée le {formaterDate(liste.dateModification)}
                 </span>
               </div>
               
               <div className="flex items-center">
-                <ClockIcon className="w-4 h-4 mr-2" style={{ color: 'var(--secondary-color)' }} />
+                <ClockIcon className="w-5 h-5 mr-2" style={{ color: 'var(--secondary-color)' }} />
                 <span style={{ color: 'rgba(236, 239, 244, 0.7)' }}>
                   Dernière sync: {formaterDate(new Date().toISOString())}
                 </span>
@@ -281,7 +276,7 @@ export default function ListePartage() {
                 
                 {progression === 100 && (
                   <div className="flex items-center mt-2 text-sm" style={{ color: 'var(--success-color)' }}>
-                    <CheckCircleIcon className="w-4 h-4 mr-2" />
+                    <CheckCircleIcon className="w-5 h-5 mr-2" />
                     Liste terminée ! Félicitations ! 🎉
                   </div>
                 )}
@@ -306,42 +301,34 @@ export default function ListePartage() {
               {/* Articles à acheter */}
               {articlesNonCoches.length > 0 && (
                 <div className="card">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--secondary-color)' }}>
-                    À acheter ({articlesNonCoches.length})
-                  </h3>
-                  
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold" style={{ color: 'var(--secondary-color)' }}>
+                      À acheter ({articlesNonCoches.length})
+                    </h3>
+                  </div>
                   <div className="space-y-2">
                     {articlesNonCoches.map((article) => (
-                      <div
-                        key={article.id}
-                        className="liste-item"
-                      >
-                        <div className="flex items-center space-x-3 flex-1">
-                          <input
-                            type="checkbox"
-                            checked={article.checked}
-                            onChange={() => toggleArticle(article.id)}
-                            disabled={updateLoading}
-                            className="w-5 h-5 rounded border-2 border-secondary-color focus:ring-2 focus:ring-accent-color transition-colors"
-                          />
-                          
-                          <div className="flex-1">
-                            <span className="liste-item-text font-medium">
-                              {article.nom}
-                            </span>
-                            {article.montant > 0 && (
-                              <span className="text-sm ml-2" style={{ color: 'var(--accent-color)' }}>
-                                {article.montant.toFixed(2)} €
-                              </span>
-                            )}
-                            {article.dateModification && (
-                              <div className="text-xs mt-1" style={{ color: 'rgba(236, 239, 244, 0.5)' }}>
-                                Modifié le {formaterDate(article.dateModification)}
-                              </div>
-                            )}
+                      <div key={article.id} className="liste-item">
+                        <div className="flex items-center w-full">
+                          <div style={{ width: '40px', display: 'flex', justifyContent: 'start' }}>
+                            <input
+                              type="checkbox"
+                              checked={article.checked}
+                              onChange={() => toggleArticle(article.id)}
+                              disabled={updateLoading}
+                              className="w-5 h-5 rounded border-2 border-secondary-color focus:ring-2 focus:ring-accent-color transition-colors"
+                            />
                           </div>
+                          <span className="" style={{ color: 'var(--secondary-color)', width: '120px', textAlign: 'left' }}>
+                            {article.categorie}
+                          </span>
+                          <span className="font-medium text-center flex-1" style={{ minWidth: 0 }}>
+                            {article.nom}
+                          </span>
+                          <span className="" style={{ color: 'var(--accent-color)', width: '120px', textAlign: 'right', marginRight: '1rem'}}>
+                            {article.montant > 0 ? `${article.montant.toFixed(2)} €` : ''}
+                          </span>
                         </div>
-                        
                         {updateLoading && (
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 ml-3" 
                                style={{ borderColor: 'var(--secondary-color)' }}></div>
@@ -358,40 +345,29 @@ export default function ListePartage() {
                   <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--success-color)' }}>
                     Acheté ({articlesCoches.length})
                   </h3>
-                  
                   <div className="space-y-2">
                     {articlesCoches.map((article) => (
-                      <div
-                        key={article.id}
-                        className="liste-item liste-item-checked"
-                      >
-                        <div className="flex items-center space-x-3 flex-1">
-                          <input
-                            type="checkbox"
-                            checked={article.checked}
-                            onChange={() => toggleArticle(article.id)}
-                            disabled={updateLoading}
-                            className="w-5 h-5 rounded border-2"
-                          />
-                          
-                          <div className="flex-1">
-                            <span className="liste-item-text">
-                              {article.nom}
-                            </span>
-                            {article.montant > 0 && (
-                              <span className="text-sm ml-2">
-                                {article.montant.toFixed(2)} €
-                              </span>
-                            )}
-                            {article.dateModification && (
-                              <div className="text-xs mt-1" style={{ color: 'rgba(236, 239, 244, 0.4)' }}>
-                                Modifié le {formaterDate(article.dateModification)}
-                              </div>
-                            )}
+                      <div key={article.id} className="liste-item liste-item-checked">
+                        <div className="flex items-center w-full">
+                          <div style={{ width: '40px', display: 'flex', justifyContent: 'start' }}>
+                            <input
+                              type="checkbox"
+                              checked={article.checked}
+                              onChange={() => toggleArticle(article.id)}
+                              disabled={updateLoading}
+                              className="w-5 h-5 rounded border-2 border-secondary-color focus:ring-2 focus:ring-accent-color"
+                            />
                           </div>
+                          <span className="text-sm" style={{ color: 'var(--secondary-color)', width: '120px', textAlign: 'left' }}>
+                            {article.categorie}
+                          </span>
+                          <span className="font-medium text-center flex-1" style={{ minWidth: 0 }}>
+                            {article.nom}
+                          </span>
+                          <span className="text-sm" style={{ color: 'var(--accent-color)', width: '120px', textAlign: 'right', marginRight: '1rem'}}>
+                            {article.montant > 0 ? `${article.montant.toFixed(2)} €` : ''}
+                          </span>
                         </div>
-                        
-                        <CheckCircleIcon className="w-5 h-5 ml-3" style={{ color: 'var(--success-color)' }} />
                       </div>
                     ))}
                   </div>
@@ -412,8 +388,7 @@ export default function ListePartage() {
                   </div>
                   
                   {progression > 0 && (
-                    <div className={progression === 100 ? 'badge-success' : 'badge-primary'}>
-                      {progression}% terminé
+                    <div className={progression === 100 ? 'badge-success' : 'badge-primary'} style={{ padding: '0.5rem', borderRadius: '0.5rem'}}>                      {progression}% terminé
                     </div>
                   )}
                 </div>

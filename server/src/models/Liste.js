@@ -4,11 +4,11 @@ import mongoose from 'mongoose'
 const articleSchema = new mongoose.Schema({
   id: Number,
   nom: { type: String, required: true },
-  quantite: { type: Number, default: 1 },
+  quantite: { type: Number, default: 1, required: true },
+  categorie: { type: String, required: true },
   unite: String,
   checked: { type: Boolean, default: false },
-  montant: { type: Number, default: 0 },
-  categorie: String
+  montant: { type: Number, default: 0 }
 }, { _id: false });
 
 // Schéma pour les listes
@@ -287,6 +287,7 @@ export const Liste = {
         id: liste._id,
         nom: liste.nom,
         articles: liste.articles,
+        categorie: liste.categorie,
         utilisateurId: liste.utilisateurId,
         dateModification: liste.dateModification
       };
@@ -363,6 +364,7 @@ export const Liste = {
         id: liste._id,
         nom: liste.nom,
         articles: liste.articles,
+        categorie: liste.categorie,
         dateCreation: liste.dateCreation,
         dateModification: liste.dateModification,
         utilisateurId: liste.utilisateurId, // Ajouté pour la sauvegarde
@@ -476,6 +478,7 @@ export const Liste = {
         id: liste._id,
         nom: liste.nom,
         articles: liste.articles,
+        categorie: liste.categorie,
         dateModification: liste.dateModification
       };
     } catch (error) {

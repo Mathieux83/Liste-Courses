@@ -7,7 +7,10 @@ import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import { BouttonAccueil } from './components/BouttonAccueil'
 import DonationsPage from './pages/DonationsPage'
+import ForgotPassword from './pages/ForgotPassword';
 import axios from 'axios'
+import usePageLoader from './hooks/usePageLoader';
+import NProgress from 'nprogress';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -18,7 +21,7 @@ function App() {
   // Pour afficher le bouton accueil uniquement sur /liste/:id
   const matchListe = /^\/liste\/[^/]+$/.test(location.pathname);
 
- 
+  usePageLoader();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -36,12 +39,16 @@ function App() {
     checkAuth();
   }, []);
 
+  useEffect(() => {
+    if (isLoading) {
+      NProgress.start();
+    } else {
+      NProgress.done();
+    }
+  }, [isLoading]);
+
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--primary-color)' }}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-      </div>
-    );
+    return null; // On retire le spinner manuel, seul NProgress s'affiche
   }
 
   // Routes protégées par authentification
@@ -58,6 +65,7 @@ function App() {
         <Route path="/dashboard" element={isAuthenticated ? <Dashboard isAuthenticated={isAuthenticated} onLogout={() => setIsAuthenticated(false)} premierChargement={premierChargement} setPremierChargement={setPremierChargement} /> : <Navigate to="/" />} />
         <Route path="/liste-partagee/:token" element={<ListePartagee />} />
         <Route path="/donations" element={<DonationsPage />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Routes protégées */}
         <Route path="/" element={

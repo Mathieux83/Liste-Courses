@@ -21,8 +21,8 @@
 
 .btn-logout-liste {
     display: flex;
-    justify-content: flex-end;
-    margin-bottom: 2rem;
+    margin-top: 1.5rem;
+    /* margin-right: 1.5rem; */
   }
 
 .btn-logout-dashboard{
@@ -34,10 +34,12 @@
 }
 
 .btn-logout-dons {
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
-    margin-right: 2.5rem;
-    margin-top: -3rem;
+    /* display: flex;
+    justify-content: flex-end; */
+    /* width: 170%; */
+    margin-left: -2.5rem;
+    margin-top: -0.5rem;
+    
+    /* margin-top: -3rem; */
     /* z-index: 10; */
 }

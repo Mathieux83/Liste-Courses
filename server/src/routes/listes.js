@@ -16,30 +16,6 @@ const handleValidation = (req, res, next) => {
   next();
 }
 
-// Routes protégées par authentification
-router.use(auth)
-
-// Obtenir toutes les listes de l'utilisateur
-router.get('/dashboard', listeController.getListes)
-
-// Obtenir la liste principale (doit être AVANT la route dynamique)
-router.get('/principale', listeController.obtenirPrincipale)
-
-// Créer une nouvelle liste
-router.post('/dashboard/newliste', listeController.creerListe)
-
-// Obtenir une liste spécifique
-router.get('/:id', listeController.getListe)
-
-// Mettre à jour une liste
-router.put('/:id', listeController.mettreAJourListe)
-
-// Supprimer une liste
-router.delete('/:id', listeController.supprimerListe)
-
-// Générer un token de partage (publique si besoin)
-router.post('/:id/partage', listeController.genererTokenPartage)
-
 // Route publique : obtenir une liste partagée avec vérification du token de partage
 router.get('/partage/:token', verifTokenPartage, (req, res) => {
   // On renvoie la liste partagée trouvée par le middleware
@@ -51,6 +27,7 @@ router.get('/partage/:token', verifTokenPartage, (req, res) => {
     id: liste._id,
     nom: liste.nom,
     articles: liste.articles,
+    categotie: liste.categotie,
     dateCreation: liste.dateCreation,
     dateModification: liste.dateModification,
     readonly: true
@@ -81,8 +58,29 @@ router.patch('/partage/:token/articles/:articleId', verifTokenPartage, async (re
   }
 })
 
-// Middleware d'authentification appliqué après les routes publiques
+// Routes protégées par authentification
 router.use(auth)
+
+// Obtenir toutes les listes de l'utilisateur
+router.get('/dashboard', listeController.getListes)
+
+// Obtenir la liste principale (doit être AVANT la route dynamique)
+router.get('/principale', listeController.obtenirPrincipale)
+
+// Créer une nouvelle liste
+router.post('/dashboard/newliste', listeController.creerListe)
+
+// Obtenir une liste spécifique
+router.get('/:id', listeController.getListe)
+
+// Mettre à jour une liste
+router.put('/:id', listeController.mettreAJourListe)
+
+// Supprimer une liste
+router.delete('/:id', listeController.supprimerListe)
+
+// Générer un token de partage (publique si besoin)
+router.post('/:id/partage', listeController.genererTokenPartage)
 
 router.post('/',
   createOrUpdateListeValidation,
