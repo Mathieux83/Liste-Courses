@@ -1,5 +1,3 @@
-Voici un plan de checkup complet (roadmap) pour corriger et améliorer le Projet, basé sur la structure de ton workspace :
-
 ## 1. Backend
 
 ### Sécurité & Authentification
@@ -16,9 +14,6 @@ Voici un plan de checkup complet (roadmap) pour corriger et améliorer le Projet
 - Vérifier la gestion des clés VAPID et la sécurité des notifications push.
 - Tester la réception des notifications sur différents navigateurs.
 
-### Base de données
-- Vérifier la structure de la base SQLite (migrations, intégrité des données).
-- Ajouter des index si besoin pour optimiser les requêtes.
 
 ## 2. Frontend
 
@@ -63,6 +58,4 @@ Voici un plan de checkup complet (roadmap) pour corriger et améliorer le Projet
 
 ---
 
-**Conseil** : Priorise d’abord la sécurité et la robustesse, puis l’UX/UI, et enfin les optimisations/performance.
-
-Si tu veux un checkup détaillé sur un point précis (ex : sécurité backend, tests frontend, etc.), dis-le-moi !
+**Note** : Priorisez d’abord la sécurité et la robustesse, puis l’UX/UI, et enfin les optimisations/performance.

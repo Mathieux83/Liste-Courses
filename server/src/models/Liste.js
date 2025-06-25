@@ -68,7 +68,7 @@ const tokenPartageSchema = new mongoose.Schema({
   },
   dateExpiration: {
     type: Date,
-    default: () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 jours
+    default: () => new Date(Date.now() + 3600000) // 1 heure par défaut
   }
 });
 

@@ -9,7 +9,7 @@ import '../styles/style-liste-courses.css'
 import LogoutButton from '../components/LogoutButton'
 // Au cas ou 
 import '../styles/index.css' 
-import { BouttonAccueil } from '../components/BouttonAccueil'
+
 import NProgress from 'nprogress';
 import { BoutonDons } from '../components/BoutonDons'
 

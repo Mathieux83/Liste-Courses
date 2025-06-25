@@ -1,6 +1,6 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { register, login, getMe } from '../controllers/authController.js';
+import { register, login, getMe, verifyResetToken, resetPassword, forgotPassword } from '../controllers/authController.js';
 import auth from '../middleware/auth.js';
 import { logout } from '../controllers/authController.js';
 
@@ -27,5 +27,9 @@ router.get('/me', auth, getMe);
 router.get('/logout', logout);
 router.post('/logout', logout);
 
+// Routes de réinitialisation de mot de passe
+router.post('/forgot-password', forgotPassword);
+router.get('/verify-reset-token/:token', verifyResetToken);
+router.post('/reset-password', resetPassword);
 
 export default router;

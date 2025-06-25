@@ -11,6 +11,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import axios from 'axios'
 import usePageLoader from './hooks/usePageLoader';
 import NProgress from 'nprogress';
+import ResetPassword from './pages/ResetPassword'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -66,6 +67,7 @@ function App() {
         <Route path="/liste-partagee/:token" element={<ListePartagee />} />
         <Route path="/donations" element={<DonationsPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Routes protégées */}
         <Route path="/" element={

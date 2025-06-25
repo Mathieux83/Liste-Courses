@@ -9,7 +9,6 @@ import listesRoutes from './routes/listes.js'
 import authRoutes from './routes/auth.js'
 import notificationsRoutes from './routes/notifications.js'
 import deliveryRoutes from './routes/delivery.js'
-import resetPasswordRoutes from './routes/reset-password.js'
 import { initializeSocketIO } from './socket.js'
 import mongoose from 'mongoose'
 import cookieParser from 'cookie-parser'
@@ -61,7 +60,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/listes', listesRoutes)
 app.use('/api/notifications', notificationsRoutes)
 app.use('/api/delivery', deliveryRoutes)
-app.use('/api/reset-password', resetPasswordRoutes)
+app.use('/api/reset-password', authRoutes)
 
 // Route de test
 app.get('/api/health', (req, res) => {

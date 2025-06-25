@@ -8,8 +8,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Liste de Courses',
-        short_name: 'Courses',
+        name: 'ListMe',
+        short_name: 'ListMe',
         description: 'Application de gestion de listes de courses',
         theme_color: '#4f46e5',
         icons: [

@@ -62,7 +62,7 @@ const ForgotPassword = () => {
   return (
     <main className="forgot-password-wrapper">
       <section className="forgot-password-card">
-        <h2 className="forgot-password-title">Mot de passe oublié</h2>
+        <h2 className="forgot-password-title -mt-5">Mot de passe oublié</h2>
         <form onSubmit={handleSubmit}>
           <div className="relative mb-4 ">
             <input
@@ -80,7 +80,8 @@ const ForgotPassword = () => {
           </div>
           <button
             type="submit"
-            className="forgot-password-btn"
+            className="btn-primary block w-full -mb-2"
+            
             disabled={loading}
           >
             {loading ? 'Envoi...' : 'Envoyer le lien de réinitialisation'}
