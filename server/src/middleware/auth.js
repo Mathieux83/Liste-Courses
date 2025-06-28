@@ -10,9 +10,9 @@ export default (req, res, next) => {
   }
   try {
     // 1. Cherche le token dans le cookie
-    console.log('Cookies reçus:', req.cookies); // DEBUG
+    // console.log('Cookies reçus:', req.cookies); // DEBUG
     const token = req.cookies?.token;
-    console.log('Token reçu dans le cookie:', token); // AJOUT DEBUG
+    // console.log('Token reçu dans le cookie:', token); // AJOUT DEBUG
     if (!token) {
       return res.status(401).json({ message: 'Token manquant' });
     }
@@ -21,7 +21,7 @@ export default (req, res, next) => {
     try {
       decodedToken = jwt.verify(token, JWT_SECRET);
     } catch (error) {
-      console.error('Erreur lors du décodage du token:', error); // AJOUT DEBUG
+      // console.error('Erreur lors du décodage du token:', error); // AJOUT DEBUG
       if (error.name === 'TokenExpiredError') {
         return res.status(401).json({ message: 'Token expiré' });
       }
@@ -32,7 +32,7 @@ export default (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error('Erreur de vérification du token:', error);
+    // // console.error('Erreur de vérification du token:', error);
     res.status(401).json({ message: 'Token invalide' });
   }
 };

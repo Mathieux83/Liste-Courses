@@ -2,7 +2,6 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   isOffline: false,
-  darkMode: false,
   notifications: [],
   modal: {
     isOpen: false,
@@ -17,9 +16,6 @@ export const uiSlice = createSlice({
   reducers: {
     setOffline: (state, action) => {
       state.isOffline = action.payload
-    },
-    toggleDarkMode: (state) => {
-      state.darkMode = !state.darkMode
     },
     addNotification: (state, action) => {
       state.notifications.push(action.payload)
@@ -46,7 +42,6 @@ export const uiSlice = createSlice({
 
 export const {
   setOffline,
-  toggleDarkMode,
   addNotification,
   removeNotification,
   openModal,

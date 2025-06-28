@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { toast } from 'react-hot-toast'
-import { api } from '../utils/api'
-import '../styles/style-liste-partage.css'
+import React, { useEffect } from 'react';
+import { toast } from 'react-hot-toast';
+import '../styles/style-liste-partage.css';
 import { 
   EyeIcon,
   ShareIcon,
@@ -10,25 +8,74 @@ import {
   XCircleIcon,
   CalendarIcon,
   DocumentTextIcon,
-  HomeIcon,
   ExclamationTriangleIcon,
-  ClockIcon
-} from '@heroicons/react/24/solid'
+  ClockIcon,
+  UserIcon
+} from '@heroicons/react/24/solid';
 import NProgress from 'nprogress';
-import { BouttonAccueil } from '../components/BouttonAccueil'
+import { BouttonAccueil } from '../components/BouttonAccueil';
+import useListePartage from '../hooks/useListePartage';
+import { useSocket } from '../contexts/SocketContext';
 
 export default function ListePartage() {
-  const { token } = useParams()
-  console.log('Token récupéré via useParams :', token)
-  const [liste, setListe] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [updateLoading, setUpdateLoading] = useState(false)
+  // Utilisation du hook personnalisé pour gérer la logique de la liste partagée
+  const {
+    liste,
+    loading,
+    error,
+    updateLoading,
+    guestUsernameState,
+    showGuestUsernamePrompt,
+    guestUsernameInput,
+    isConnected,
+    setGuestUsernameInput,
+    handleUsernameSubmit,
+    handleUsernameReset,
+    toggleArticle,
+    chargerListePartagee,
+    setListe // Ajout de setListe depuis le hook
+  } = useListePartage();
 
+  // Récupérer l'instance de socket depuis le contexte
+  const socket = useSocket();
+
+  // Gestion des mises à jour en temps réel via Socket.IO
   useEffect(() => {
-    chargerListePartagee()
-  }, [token])
+    if (!socket || !socket.socket) return;
 
+    const handleListeUpdate = (updatedListe) => {
+      console.log('[ListePartage] Mise à jour de la liste reçue:', updatedListe);
+      
+      // Normaliser les données reçues
+      if (updatedListe && updatedListe.articles) {
+        updatedListe.articles = updatedListe.articles.map(article => ({
+          ...article,
+          _id: article._id || article.id, // Assurer que _id est défini
+          id: article._id || article.id   // Pour la rétrocompatibilité
+        }));
+      }
+      
+      setListe(prevListe => {
+        // Si la liste mise à jour a un ID différent, ne pas mettre à jour
+        if (prevListe && prevListe._id !== updatedListe._id) {
+          return prevListe;
+        }
+        return updatedListe;
+      });
+    };
+
+    // S'abonner aux mises à jour de la liste
+    socket.socket.on('liste-updated', handleListeUpdate);
+
+    // Nettoyer l'écouteur lors du démontage du composant
+    return () => {
+      if (socket.socket) {
+        socket.socket.off('liste-updated', handleListeUpdate);
+      }
+    };
+  }, [socket, setListe]);
+
+  // Gestion du chargement avec NProgress
   useEffect(() => {
     if (loading) {
       NProgress.start();
@@ -40,80 +87,26 @@ export default function ListePartage() {
     };
   }, [loading]);
 
-  const chargerListePartagee = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      const listeData = await api.obtenirListePartagee(token)
-      setListe(listeData)
-      toast.success('Liste partagée chargée !')
-    } catch (error) {
-      const errorMessage = error.response?.status === 404 
-        ? 'Cette liste partagée n\'existe pas ou a été supprimée'
-        : error.response?.status === 403
-        ? 'Vous n\'avez pas accès à cette liste'
-        : 'Impossible de charger la liste partagée'
-      
-      setError(errorMessage)
-      toast.error(errorMessage)
-      console.error('Erreur chargement liste partagée:', error)
-    } finally {
-      setLoading(false)
+  // Chargement initial de la liste
+  useEffect(() => {
+    if (liste === null && !loading && !error) {
+      chargerListePartagee();
     }
-  }
+  }, [liste, loading, error, chargerListePartagee]);
 
-  const toggleArticle = async (articleId) => {
-    if (updateLoading) return
-
-    try {
-      setUpdateLoading(true)
-      let newChecked = false;
-      setListe(prevListe => {
-        const updatedArticles = prevListe.articles.map(article => {
-          if (article.id === articleId) {
-            newChecked = !article.checked;
-            return { ...article, checked: newChecked, dateModification: new Date().toISOString() };
-          }
-          return article;
-        });
-        return {
-          ...prevListe,
-          articles: updatedArticles,
-          dateModification: new Date().toISOString()
-        };
-      })
-
-      // Synchronisation avec le serveur
-      await api.mettreAJourArticlePartage(token, articleId, newChecked)
-      toast.success('Article mis à jour !')
-      
-    } catch (error) {
-      // Reverser la mise à jour optimiste en cas d'erreur
-      setListe(prevListe => ({
-        ...prevListe,
-        articles: prevListe.articles.map(article =>
-          article.id === articleId
-            ? { ...article, checked: !article.checked }
-            : article
-        )
-      }))
-      
-      toast.error('Erreur lors de la mise à jour')
-      console.error('Erreur toggle article:', error)
-    } finally {
-      setUpdateLoading(false)
-    }
-  }
-
+  // Fonctions utilitaires pour l'affichage
   const calculerTotal = () => {
-    if (!liste || !liste.articles) return 0
-    return liste.articles.reduce((total, article) => total + (article.montant || 0), 0)
-  }
+    if (!liste?.articles) return 0;
+    return liste.articles.reduce((total, article) => total + (article.montant || 0), 0);
+  };
 
+  // Calcul des articles cochés et non cochés
+  const articlesCoches = liste?.articles?.filter(article => article.checked) || [];
+  const articlesNonCoches = liste?.articles?.filter(article => !article.checked) || [];
+  
   const calculerProgression = () => {
-    if (!liste || !liste.articles || liste.articles.length === 0) return 0
-    const articlesCoches = liste.articles.filter(article => article.checked).length
-    return Math.round((articlesCoches / liste.articles.length) * 100)
+    if (!liste?.articles?.length) return 0;
+    return Math.round((articlesCoches.length / liste.articles.length) * 100);
   }
 
   const formaterDate = (dateString) => {
@@ -128,15 +121,58 @@ export default function ListePartage() {
   }
 
   // État de chargement
-  if (loading) {
-    return null;
+  if (loading || !liste) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    )
+  }
+
+  // Modal nom utilisateur
+  if (showGuestUsernamePrompt) {
+    return (
+      <div className='min-h-screen flex items-center justify-center p-4 -mt-8' style={{ backgroundColor: 'var(--primary-color)' }}>
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center pastille-hover" 
+                 style={{ backgroundColor: 'var(--secondary-color)' }}>
+              <UserIcon className="w-8 h-8" style={{ color: 'var(--primary-color)' }} />
+            </div>
+            <h1 className="text-3xl font-bold mb-2 border-text" style={{ color: 'var(--secondary-color)' }}>
+              Connexion
+            </h1>
+            <p style={{ color: 'rgba(236, 239, 244, 0.7)' }}>
+              Accédez à la liste partagée
+            </p>
+          </div>
+          <div className='text-center auth-container'>
+            <form onSubmit={handleUsernameSubmit} className='space-y-6'>
+              <label className='block font-medium mb-2 box-shadow' style={{ color: 'var(--secondary-color)', fontSize: '1.5rem' }}>Entrez un nom d'utilisateur</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={guestUsernameInput}
+                  onChange={e => setGuestUsernameInput(e.target.value)}
+                  autoFocus
+                  required
+                  placeholder="Votre nom d'utilisateur"
+                  className='auth-input pl-10'                         
+                />
+                <UserIcon className="w-5 h-5 absolute left-4 top-4" style={{ color: 'var(--secondary-color)' }} />
+              </div>
+              <button type="submit" className='btn-primary w-full'>Valider</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   // État d'erreur
   if (error) {
     return (
       <>
-
         <div className="min-h-screen flex items-center justify-center p-4" 
             style={{ backgroundColor: 'var(--primary-color)' }}>
           <div className="card text-center max-w-lg">
@@ -160,20 +196,19 @@ export default function ListePartage() {
               >
                 Réessayer
               </button>
-              
-
             </div>
           </div>
           <div>
-          <BouttonAccueil/>
+            <BouttonAccueil/>
           </div>
         </div>
       </>
     )
   }
 
-  const articlesNonCoches = liste.articles.filter(article => !article.checked)
-  const articlesCoches = liste.articles.filter(article => article.checked)
+  // Jamais de mutation directe sur liste.articles !
+
+
   const progression = calculerProgression()
 
   return (
@@ -234,14 +269,14 @@ export default function ListePartage() {
               <div className="flex items-center">
                 <DocumentTextIcon className="w-5 h-5 mr-2" style={{ color: 'var(--secondary-color)' }} />
                 <span style={{ color: 'rgba(236, 239, 244, 0.7)' }}>
-                  {liste.articles.length} article{liste.articles.length > 1 ? 's' : ''}
+                  {liste?.articles?.length || 0} article{liste?.articles?.length > 1 ? 's' : ''}
                 </span>
               </div>
               
               <div className="flex items-center">
                 <CalendarIcon className="w-5 h-5 mr-2" style={{ color: 'var(--secondary-color)' }} />
                 <span style={{ color: 'rgba(236, 239, 244, 0.7)' }}>
-                  Modifiée le {formaterDate(liste.dateModification)}
+                  Modifiée le {liste?.dateModification ? formaterDate(liste.dateModification) : 'date inconnue'}
                 </span>
               </div>
               
@@ -254,14 +289,14 @@ export default function ListePartage() {
             </div>
 
             {/* Barre de progression */}
-            {liste.articles.length > 0 && (
+            {liste?.articles?.length > 0 && (
               <div className="mt-4">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm font-medium" style={{ color: 'var(--secondary-color)' }}>
                     Progression de la liste
                   </span>
                   <span className="text-sm font-semibold" style={{ color: 'var(--secondary-color)' }}>
-                    {articlesCoches.length}/{liste.articles.length} ({progression}%)
+                    {articlesCoches?.length || 0}/{liste?.articles?.length || 0} ({progression}%)
                   </span>
                 </div>
                 <div className="w-full rounded-full h-3" style={{ backgroundColor: 'var(--primary-color)' }}>
@@ -285,7 +320,7 @@ export default function ListePartage() {
           </div>
 
           {/* Contenu de la liste */}
-          {liste.articles.length === 0 ? (
+          {(!liste.articles || liste.articles.length === 0) ? (
             <div className="card text-center py-16">
               <div className="text-6xl mb-6">📋</div>
               <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--secondary-color)' }}>
@@ -307,14 +342,14 @@ export default function ListePartage() {
                     </h3>
                   </div>
                   <div className="space-y-2">
-                    {articlesNonCoches.map((article) => (
-                      <div key={article.id} className="liste-item">
+                    {articlesNonCoches.map((article, idx) => (
+                      <div key={article._id || idx} className="liste-item">
                         <div className="flex items-center w-full">
                           <div style={{ width: '40px', display: 'flex', justifyContent: 'start' }}>
                             <input
                               type="checkbox"
                               checked={article.checked}
-                              onChange={() => toggleArticle(article.id)}
+                              onChange={() => toggleArticle(article._id)}
                               disabled={updateLoading}
                               className="w-5 h-5 rounded border-2 border-secondary-color focus:ring-2 focus:ring-accent-color transition-colors"
                             />
@@ -346,14 +381,14 @@ export default function ListePartage() {
                     Acheté ({articlesCoches.length})
                   </h3>
                   <div className="space-y-2">
-                    {articlesCoches.map((article) => (
-                      <div key={article.id} className="liste-item liste-item-checked">
+                    {articlesCoches.map((article, idx) => (
+                      <div key={article._id || idx} className="liste-item liste-item-checked">
                         <div className="flex items-center w-full">
                           <div style={{ width: '40px', display: 'flex', justifyContent: 'start' }}>
                             <input
                               type="checkbox"
                               checked={article.checked}
-                              onChange={() => toggleArticle(article.id)}
+                              onChange={() => toggleArticle(article._id)}
                               disabled={updateLoading}
                               className="w-5 h-5 rounded border-2 border-secondary-color focus:ring-2 focus:ring-accent-color"
                             />
@@ -382,13 +417,14 @@ export default function ListePartage() {
                       Total estimé: {calculerTotal().toFixed(2)} €
                     </span>
                     <div className="text-sm mt-1" style={{ color: 'rgba(236, 239, 244, 0.7)' }}>
-                      {liste.articles.length} article{liste.articles.length > 1 ? 's' : ''} au total
+                      {liste.articles.length} article{liste.articles.length > 1 ? 's' : ''}
                       {articlesCoches.length > 0 && ` • ${articlesCoches.length} acheté${articlesCoches.length > 1 ? 's' : ''}`}
                     </div>
                   </div>
                   
                   {progression > 0 && (
-                    <div className={progression === 100 ? 'badge-success' : 'badge-primary'} style={{ padding: '0.5rem', borderRadius: '0.5rem'}}>                      {progression}% terminé
+                    <div className={progression === 100 ? 'badge-success' : 'badge-primary'} style={{ padding: '0.5rem', borderRadius: '0.5rem'}}>
+                      {progression}% terminé
                     </div>
                   )}
                 </div>

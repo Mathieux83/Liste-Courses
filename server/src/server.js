@@ -18,7 +18,7 @@ dotenv.config()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-
+const mongoURI = `mongodb+srv://${process.env.MONGO_USER}:${encodeURIComponent(process.env.MONGO_PASSWORD)}@${process.env.MONGO_CLUSTER}/${process.env.MONGO_DB}?retryWrites=true&w=majority&appName=Cluster0`
 
 const app = express()
 const PORT = process.env.PORT
@@ -38,9 +38,42 @@ const limiter = rateLimit({
 app.use('/api/', limiter)
 
 // CORS
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'http://localhost:3001',
+  'http://127.0.0.1:3001',
+  'https://listecourses.vercel.app',
+  'https://listecourses-frontend.vercel.app',
+  process.env.FRONTEND_URL,
+  process.env.API_URL
+].filter(Boolean);
+
+// Configuration CORS plus permissive pour le développement
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
+  origin: function (origin, callback) {
+    console.log('Origine de la requête:', origin);
+    
+    // En développement, on autorise toutes les origines
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Mode développement - Toutes les origines sont autorisées');
+      return callback(null, true);
+    }
+    
+    // En production, on vérifie les origines autorisées
+    if (!origin || allowedOrigins.includes(origin)) {
+      console.log(`Origine autorisée: ${origin}`);
+      return callback(null, true);
+    }
+    
+    // Si l'origine n'est pas autorisée en production
+    console.log(`Origine non autorisée: ${origin}`);
+    return callback(new Error('Origine non autorisée par CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range']
 }))
 
 // Parsing JSON avec limites de taille
@@ -103,7 +136,8 @@ const startServer = () => {
   console.log('✨ Socket.IO initialisé')
 }
 
-mongoose.connect(process.env.MONGODB_URI)
+// console.log('Tentative de connexion à MongoDB via l\URI :', mongoURI)
+mongoose.connect(mongoURI)
 
 .then(() => {
   console.log('✅ Connexion à MongoDB établie')

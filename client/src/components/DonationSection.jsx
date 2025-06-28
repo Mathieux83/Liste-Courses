@@ -36,7 +36,8 @@ const DonationSection = () => {
       💖<br></br> Même un petit geste représente un vrai boost de motivation..<br></br>
       Mon objectif : faire de <b>Listo</b> une application publique, stable, utile et accessible à tous.<br></br>
       <b>Merci d'avance pour ton soutien</b><br></br>
-      🫶      
+      🫶 <br></br><br></br>
+      PS: Le mieux c'est avec <b>Liberapay</b> ☝️, mais si tu préfères avec Stripe, voici les options disponibles :
       </div>
       <div className="stripe-cards" style={{ display: 'flex', gap: '2rem', justifyContent: 'center', marginTop: 24 }}>
         {/* Remplace les boutons Stripe par des cards Stripe Buy Button */}

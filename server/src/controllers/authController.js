@@ -85,14 +85,15 @@ export const login = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000
+      maxAge: 24 * 60 * 60 * 1000 // 24 heures
     });
     res.json({
       user: {
         id: user._id,
         email: user.email,
         name: user.name
-      }
+      },
+      token
     });
   } catch (error) {
     res.status(500).json({ message: 'Erreur serveur' });

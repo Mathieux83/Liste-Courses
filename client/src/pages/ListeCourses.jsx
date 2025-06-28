@@ -1,183 +1,274 @@
-import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import ModalPartage from '../components/ModalPartage'
-import { api } from '../utils/api'
-import { exporterPDF, capturerEcran, imprimerListe } from '../utils/exportUtils'
-import { PlusIcon, TrashIcon, ShareIcon, PrinterIcon, DocumentArrowDownIcon, ChevronDownIcon } from '@heroicons/react/24/solid'
+import { exporterPDF, imprimerListe } from '../utils/exportUtils'
+import { PlusIcon, TrashIcon, ShareIcon, PrinterIcon, DocumentArrowDownIcon, ChevronDownIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 import '../styles/style-liste-courses.css'
 import LogoutButton from '../components/LogoutButton'
-// Au cas ou 
-import '../styles/index.css' 
-
-import NProgress from 'nprogress';
-import { BoutonDons } from '../components/BoutonDons'
+import { BouttonAccueil } from '../components/BouttonAccueil'
+import NProgress from 'nprogress'
+import useListeCourses from '../hooks/useListeCourses'
+import { useSocket } from '../contexts/SocketContext'
+import { api } from '../utils/api'
+import '../styles/index.css'
 
 const ListeCourses = () => {
-  const { id } = useParams()
-  const [articles, setArticles] = useState([])
-  const [nouvelArticle, setNouvelArticle] = useState({
-    nom: '',
-    montant: '',
-    categorie: "",
-    checked: false
-  })
-  const [modalPartageOuvert, setModalPartageOuvert] = useState(false)
-  const [nomListe, setNomListe] = useState('Ma Liste de Courses')
-  const [listeId, setListeId] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [triCritere, setTriCritere] = useState('nom')
-  const [triOrdre, setTriOrdre] = useState('asc')
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const { socket, isConnected } = useSocket();
+  const [modalPartage, setModalPartage] = useState(false);
+  const [nomListe, setNomListe] = useState('');
+  const [syncing, setSyncing] = useState(false);
+  const [nouvelArticle, setNouvelArticle] = useState({ nom: '', categorie: '', montant: '' });
+  const [triCritere, setTriCritere] = useState('nom');
+  const [triOrdre, setTriOrdre] = useState('asc');
+  
+  // Utilisation du hook personnalisé pour la gestion de la liste
+  const {
+    currentListe,
+    loading: loadingListe,
+    error,
+    addArticle,
+    toggleArticle,
+    deleteArticle,
+    refetch,
+    setCurrentListe
+  } = useListeCourses();
 
+  // Mettre à jour le nom de la liste quand elle est chargée
   useEffect(() => {
-    chargerListe()
-    // eslint-disable-next-line
-  }, [id])
+    console.log('[ListeCourses] currentListe mise à jour:', currentListe);
+    if (currentListe?.nom) {
+      setNomListe(currentListe.nom);
+      document.title = `Liste: ${currentListe.nom}`;
+    }
+  }, [currentListe]);
 
+  // Gestion du chargement avec NProgress
   useEffect(() => {
-    if (loading) {
+    if (loadingListe || syncing) {
       NProgress.start();
     } else {
       NProgress.done();
     }
-    return () => {
-      NProgress.done();
-    };
-  }, [loading]);
+    return () => NProgress.done();
+  }, [loadingListe, syncing]);
 
-  const chargerListe = async () => {
-    try {
-      setLoading(true)
-      let liste
-      if (id) {
-        liste = await api.obtenirListeParId(id)
-      } else {
-        liste = await api.obtenirListe()
-      }
-      if (liste) {
-        setArticles(liste.articles || [])
-        setNomListe(liste.nom || 'Ma Liste de Courses')
-        setListeId(liste.id)
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement:', error)
-      toast.error('Erreur lors du chargement de la liste')
-    } finally {
-      setLoading(false)
+  // Gestion des erreurs
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
     }
-  }
+  }, [error]);
 
-  const sauvegarderListe = async () => {
-    try {
-      const listeData = {
-        id: listeId,
-        nom: nomListe,
-        articles: articles
-      }
-      const liste = await api.sauvegarderListe(listeData)
-      setListeId(liste.id)
-      toast.success('Liste sauvegardée !')
-    } catch (error) {
-      toast.error('Erreur lors de la sauvegarde')
-      console.error('Erreur sauvegarde:', error)
-    }
-  }
-
-  const ajouterArticle = () => {
-    if (nouvelArticle.nom.trim() === '') {
-      toast.error('Veuillez saisir un nom d\'article')
-      return
-    }
-
-    const article = {
-      id: Date.now(),
-      categorie: nouvelArticle.categorie,
-      nom: nouvelArticle.nom.trim(),
-      montant: parseFloat(nouvelArticle.montant) || 0,
-
-      checked: false,
-      dateAjout: new Date().toISOString()
-    }
-
-    setArticles([...articles, article])
-    setNouvelArticle({ nom: '', montant: '', categorie: '', checked: false })
-    toast.success('Article ajouté !')
-  }
-
-  const supprimerArticle = (id) => {
-    setArticles(articles.filter(article => article.id !== id))
-    toast.success('Article supprimé !')
-  }
-
-  const toggleArticle = (id) => {
-    setArticles(articles.map(article =>
-      article.id === id
-        ? { ...article, checked: !article.checked }
-        : article
-    ))
-  }
-
-  const calculerTotal = () => {
-    return articles.reduce((total, article) => total + article.montant, 0)
-  }
-
-  const viderListe = () => {
-    if (window.confirm('Êtes-vous sûr de vouloir vider la liste ?')) {
-      setArticles([])
-      toast.success('Liste vidée !')
-    }
-  }
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      ajouterArticle()
-    }
-  }
-
+  // Fonction utilitaire pour trier les articles
   const trierArticles = (articles, critere, ordre) => {
+    console.log(`[ListeCourses] Tri des articles - critère: ${critere}, ordre: ${ordre}`);
     const sorted = [...articles].sort((a, b) => {
       if (critere === 'prix') {
-        return ordre === 'asc' ? a.montant - b.montant : b.montant - a.montant
+        return ordre === 'asc' ? a.montant - b.montant : b.montant - a.montant;
       } else {
-        const valA = (a[critere] || '').toString().toLowerCase()
-        const valB = (b[critere] || '').toString().toLowerCase()
-        if (valA < valB) return ordre === 'asc' ? -1 : 1
-        if (valA > valB) return ordre === 'asc' ? 1 : -1
-        return 0
+        const valA = (a[critere] || '').toString().toLowerCase();
+        const valB = (b[critere] || '').toString().toLowerCase();
+        if (valA < valB) return ordre === 'asc' ? -1 : 1;
+        if (valA > valB) return ordre === 'asc' ? 1 : -1;
+        return 0;
       }
-    })
-    return sorted
+    });
+    console.log('[ListeCourses] Articles triés:', sorted);
+    return sorted;
+  };
+
+  // Mémoization des articles triés
+  const articles = useMemo(() => {
+    console.log('[ListeCourses] Mise à jour des articles:', currentListe?.articles);
+    return currentListe?.articles || [];
+  }, [currentListe?.articles]);
+  
+  const articlesCoches = useMemo(() => {
+    const coches = articles.filter(article => article.checked);
+    console.log('[ListeCourses] Articles cochés:', coches);
+    return coches;
+  }, [articles]);
+  
+  const articlesNonCoches = useMemo(() => {
+    const nonCoches = articles.filter(article => !article.checked);
+    const tries = trierArticles(nonCoches, triCritere, triOrdre);
+    console.log('[ListeCourses] Articles non cochés triés:', tries);
+    return tries;
+  }, [articles, triCritere, triOrdre]);
+
+  // Gestionnaire d'ajout d'article
+  const handleAjouterArticle = async (e) => {
+    e.preventDefault();
+    if (!nouvelArticle.nom.trim()) return;
+    
+    const article = {
+      nom: nouvelArticle.nom.trim(),
+      categorie: nouvelArticle.categorie.trim() || 'Divers',
+      montant: parseFloat(nouvelArticle.montant) || 0,
+      checked: false,
+    };
+    
+    try {
+      setSyncing(true);
+      await addArticle(article);
+      setNouvelArticle({ nom: '', categorie: '', montant: '' });
+      toast.success('Article ajouté !');
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout de l\'article:', error);
+      toast.error('Erreur lors de l\'ajout de l\'article');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  // Gestionnaire de suppression d'article
+  const handleSupprimerArticle = async (articleId) => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) return;
+    
+    try {
+      setSyncing(true);
+      await deleteArticle(articleId);
+      toast.success('Article supprimé !');
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      toast.error('Erreur lors de la suppression');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  // Gestionnaire de basculement d'état d'article
+  const handleToggleArticle = async (articleId, currentChecked) => {
+    try {
+      setSyncing(true);
+      await toggleArticle(articleId, !currentChecked);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour:', error);
+      toast.error('Erreur lors de la mise à jour');
+      await refetch(); // Recharger la liste en cas d'erreur
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  // Gestionnaire de sauvegarde du titre
+  const handleSauvegarderTitre = async () => {
+    if (!currentListe?._id || !nomListe.trim()) return;
+    
+    try {
+      setSyncing(true);
+      await api.mettreAJourListe(currentListe._id, { nom: nomListe.trim() });
+      toast.success('Titre mis à jour !');
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du titre:', error);
+      toast.error('Erreur lors de la mise à jour du titre');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  // Gestionnaire de vidage de la liste
+  const handleViderListe = async () => {
+    if (!currentListe?._id) {
+      console.error('Impossible de vider la liste: ID de liste manquant');
+      toast.error('Erreur: Liste introuvable');
+      return;
+    }
+    
+    if (!window.confirm('Êtes-vous sûr de vouloir vider la liste ? Tous les articles seront supprimés.')) {
+      return;
+    }
+    
+    try {
+      console.log(`[ListeCourses] Début du vidage de la liste ${currentListe._id}`);
+      setSyncing(true);
+      
+      // Appeler l'API pour vider la liste
+      const result = await api.effacerArticlesDeListe(currentListe._id);
+      console.log('[ListeCourses] Réponse du vidage de la liste:', result);
+      
+      // Mettre à jour l'état local
+      if (result && result._id) {
+        setCurrentListe(prev => ({
+          ...prev,
+          articles: []
+        }));
+        toast.success(result.message || 'Tous les articles ont été supprimés avec succès');
+      } else {
+        throw new Error(result?.message || 'Erreur lors de la suppression des articles');
+      }
+    } catch (error) {
+      console.error('[ListeCourses] Erreur lors du vidage de la liste:', error);
+      toast.error(error.message || 'Une erreur est survenue lors de la suppression des articles');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  // Calcul du total des articles
+  const calculerTotal = useCallback(() => {
+    return articles.reduce((sum, article) => sum + (parseFloat(article.montant) || 0), 0);
+  }, [articles]);
+
+  // Gestionnaire de touche Entrée
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleAjouterArticle(e);
+    }
+  };
+
+  // Affichage du chargement
+  if (loadingListe) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-color"></div>
+      </div>
+    );
   }
-
-  const articlesNonCoches = trierArticles(
-    articles.filter(article => !article.checked),
-    triCritere,
-    triOrdre
-  )
-  const articlesCoches = articles.filter(article => article.checked)
-
-  if (loading) {
-    return null;
+  
+  // Affichage si la liste n'est pas trouvée
+  if (!currentListe) {
+    return (
+      <div className="text-center py-10">
+        <h2 className="text-2xl font-semibold mb-4">Liste introuvable</h2>
+        <button 
+          onClick={() => navigate('/dashboard')} 
+          className="btn-primary"
+        >
+          Retour au tableau de bord
+        </button>
+      </div>
+    );
   }
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '27.050rem'}} >
-        <div className="btn-accueil-liste">
-          <BouttonAccueil/>
+      {/* Indicateur de synchronisation */}
+      {syncing && (
+        <div className="fixed bottom-4 right-4 bg-white p-3 rounded-lg shadow-lg flex items-center gap-2 text-sm z-50">
+          <ArrowPathIcon className="w-5 h-5 animate-spin" />
+          <span>Synchronisation...</span>
         </div>
-        <div className="btn-logout-liste">
-          <LogoutButton />
-        </div>
-      </div>  
-      <div className="liste-container">
+      )}
 
-        {/* Header avec titre et actions */}
+      {/* En-tête avec boutons de navigation */}
+      <div className="flex justify-center gap-4 mb-6">
+        <BouttonAccueil />
+        <LogoutButton />
+      </div>
+
+      <div className="liste-container">
+        {/* En-tête de la liste */}
         <div className="liste-header">
           <input
             type="text"
             value={nomListe}
             onChange={(e) => setNomListe(e.target.value)}
+            onBlur={handleSauvegarderTitre}
+            onKeyDown={(e) => e.key === 'Enter' && handleSauvegarderTitre()}
             className="liste-title liste-input"
             style={{ 
               fontSize: '2rem', 
@@ -189,11 +280,11 @@ const ListeCourses = () => {
           />
           
           {/* Boutons d'actions */}
-          <div className="flex justify-center gap-3 mt-4 flex-wrap ">
+          <div className="flex justify-center gap-3 mt-4 flex-wrap">
             <button
-              onClick={() => setModalPartageOuvert(true)}
+              onClick={() => setModalPartage(true)}
               className="btn-primary"
-              disabled={!listeId}
+              disabled={!currentListe?._id}
             >
               <ShareIcon className="w-5 h-5 inline mr-2 mb-1 mt-0.5" />
               Partager
@@ -202,6 +293,7 @@ const ListeCourses = () => {
             <button
               onClick={() => exporterPDF(articles, nomListe)}
               className="btn-secondary"
+              disabled={!articles.length}
             >
               <DocumentArrowDownIcon className="w-5 h-5 inline mr-2 mb-1 mt-0.5" />
               Exporter PDF
@@ -210,6 +302,7 @@ const ListeCourses = () => {
             <button
               onClick={() => imprimerListe(articles, nomListe)}
               className="btn-secondary"
+              disabled={!articles.length}
             >
               <PrinterIcon className="w-5 h-5 inline mr-2 mb-1 mt-0.5" />
               Imprimer
@@ -217,7 +310,7 @@ const ListeCourses = () => {
           </div>
         </div>
 
-        {/* Formulaire d'ajout */}
+        {/* Formulaire d'ajout d'article */}
         <div className="add-item-form">
           <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--secondary-color)' }}>
             Ajouter un article
@@ -237,10 +330,10 @@ const ListeCourses = () => {
                 className="liste-input"
               />
             </div>
+            
             <div style={{ position: "relative" }}>
               <select
                 className="cat-form"
-                type="categorie"
                 value={nouvelArticle.categorie}
                 onChange={e => setNouvelArticle({ ...nouvelArticle, categorie: e.target.value })}
                 style={{ appearance: "none", WebkitAppearance: "none", MozAppearance: "none" }}
@@ -271,6 +364,7 @@ const ListeCourses = () => {
                 }}
               />
             </div>
+            
             <div>
               <input
                 type="number"
@@ -280,34 +374,29 @@ const ListeCourses = () => {
                 value={nouvelArticle.montant}
                 onChange={(e) => setNouvelArticle({
                   ...nouvelArticle,
-                  montant: parseFloat(e.target.value)
+                  montant: e.target.value
                 })}
+                onKeyPress={handleKeyPress}
                 className="liste-input"
               />
             </div>
-
           </div>
           
           <div className="flex gap-3 mt-4">
             <button
-              onClick={ajouterArticle}
+              onClick={handleAjouterArticle}
               className="btn-primary flex-1"
+              disabled={!nouvelArticle.nom.trim()}
             >
               <PlusIcon className="w-5 h-5 inline mr-2" />
               Ajouter
             </button>
             
-            <button
-              onClick={sauvegarderListe}
-              className="btn-secondary"
-            >
-              Sauvegarder
-            </button>
-            
             {articles.length > 0 && (
               <button
-                onClick={viderListe}
+                onClick={handleViderListe}
                 className="btn-danger"
+                disabled={syncing}
               >
                 <TrashIcon className="w-5 h-5" />
               </button>
@@ -331,21 +420,22 @@ const ListeCourses = () => {
             {/* Articles non cochés */}
             {articlesNonCoches.length > 0 && (
               <div className="card">
-                <div className="flex justify-between items-center mb-7">
+                <div className="flex justify-between items-center mb-3">
                   <h3 className="text-lg font-semibold" style={{ color: 'var(--secondary-color)' }}>
                     À acheter ({articlesNonCoches.length})
                   </h3>
-                  {/* Boutons de tri à droite */}
+                  
+                  {/* Boutons de tri */}
                   <div className="flex gap-2 flex-wrap items-center">
-                    <span className="font-medium mr-2"></span>
+                    <span className="font-medium mr-2">Trier par :</span>
                     <button
                       className={`btn-secondary btn-xs ${triCritere === 'categorie' ? 'active' : ''}`}
                       onClick={() => {
                         if (triCritere === 'categorie') {
-                          setTriOrdre(triOrdre === 'asc' ? 'desc' : 'asc')
+                          setTriOrdre(triOrdre === 'asc' ? 'desc' : 'asc');
                         } else {
-                          setTriCritere('categorie')
-                          setTriOrdre('asc')
+                          setTriCritere('categorie');
+                          setTriOrdre('asc');
                         }
                       }}
                     >
@@ -355,10 +445,10 @@ const ListeCourses = () => {
                       className={`btn-secondary btn-xs ${triCritere === 'nom' ? 'active' : ''}`}
                       onClick={() => {
                         if (triCritere === 'nom') {
-                          setTriOrdre(triOrdre === 'asc' ? 'desc' : 'asc')
+                          setTriOrdre(triOrdre === 'asc' ? 'desc' : 'asc');
                         } else {
-                          setTriCritere('nom')
-                          setTriOrdre('asc')
+                          setTriCritere('nom');
+                          setTriOrdre('asc');
                         }
                       }}
                     >
@@ -368,10 +458,10 @@ const ListeCourses = () => {
                       className={`btn-secondary btn-xs ${triCritere === 'prix' ? 'active' : ''}`}
                       onClick={() => {
                         if (triCritere === 'prix') {
-                          setTriOrdre(triOrdre === 'asc' ? 'desc' : 'asc')
+                          setTriOrdre(triOrdre === 'asc' ? 'desc' : 'asc');
                         } else {
-                          setTriCritere('prix')
-                          setTriOrdre('asc')
+                          setTriCritere('prix');
+                          setTriOrdre('asc');
                         }
                       }}
                     >
@@ -379,42 +469,50 @@ const ListeCourses = () => {
                     </button>
                   </div>
                 </div>
+                
                 <div className="space-y-2">
-                  {articlesNonCoches.map((article) => (
-                    <div key={article.id} className="liste-item">
-                      <div className="flex items-center w-full ">
-                        <div style={{ width: '40px', display: 'flex', justifyContent: 'start' }}>
-                          <input
-                            type="checkbox"
-                            checked={article.checked}
-                            onChange={() => toggleArticle(article.id)}
-                            className="w-5 h-5 rounded border-2 border-secondary-color focus:ring-2 focus:ring-accent-color"
-                          />
-                        </div>
-                        <span className="" style={{ color: 'var(--secondary-color)', width: '120px', textAlign: 'left' }}>
-                          {article.categorie}
-                        </span>
-                        <span className="font-medium text-center flex-1" style={{ minWidth: 0 }}>
-                          {article.nom}
-                        </span>
-                        <span className="" style={{ color: 'var(--accent-color)', width: '120px', textAlign: 'right', marginRight: '1rem'}}>
-                          {article.montant > 0 ? `${article.montant.toFixed(2)} €` : ''}
-                        </span>
-                        <div style={{ width: '40px', display: 'flex', justifyContent: 'center' }}>
-                          <button
-                            onClick={() => supprimerArticle(article.id)}
-                            className="delete-btn"
-                            title="Supprimer"
-                          >
-                            <TrashIcon className="w-4 h-4" />
-                          </button>
+                  {articlesNonCoches.map((article, index) => {
+                    // Utiliser _id si disponible, sinon utiliser l'index comme clé de secours
+                    const articleKey = article._id || `temp-${index}-${article.nom}`;
+                    return (
+                      <div key={articleKey} className="liste-item">
+                        <div className="flex items-center w-full">
+                          <div style={{ width: '40px', display: 'flex', justifyContent: 'start' }}>
+                            <input
+                              type="checkbox"
+                              checked={article.checked || false}
+                              onChange={() => handleToggleArticle(article._id, article.checked)}
+                              className="w-5 h-5 rounded border-2 border-secondary-color focus:ring-2 focus:ring-accent-color"
+                              disabled={syncing}
+                            />
+                          </div>
+                          <span className="" style={{ color: 'var(--secondary-color)', width: '120px', textAlign: 'left' }}>
+                            {article.categorie || 'Sans catégorie'}
+                          </span>
+                          <span className="font-medium text-center flex-1" style={{ minWidth: 0 }}>
+                            {article.nom || 'Nom manquant'}
+                          </span>
+                          <span className="" style={{ color: 'var(--accent-color)', width: '120px', textAlign: 'right', marginRight: '1rem'}}>
+                            {(article.montant || 0).toFixed(2)}€
+                          </span>
+                          <div style={{ width: '40px', display: 'flex', justifyContent: 'center' }}>
+                            <button
+                              onClick={() => handleSupprimerArticle(article._id)}
+                              className="delete-btn"
+                              title="Supprimer"
+                              disabled={syncing}
+                            >
+                              <TrashIcon className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
+            
             {/* Articles cochés */}
             {articlesCoches.length > 0 && (
               <div className="card">
@@ -422,42 +520,48 @@ const ListeCourses = () => {
                   Acheté ({articlesCoches.length})
                 </h3>
                 <div className="space-y-2">
-                  {articlesCoches.map((article) => (
-                    <div key={article.id} className="liste-item liste-item-checked">
-                      <div className="flex items-center w-full">
-                        <div style={{ width: '40px', display: 'flex', justifyContent: 'start' }}>
-                          <input
-                            type="checkbox"
-                            checked={article.checked}
-                            onChange={() => toggleArticle(article.id)}
-                            className="w-5 h-5 rounded border-2 border-secondary-color focus:ring-2 focus:ring-accent-color"
-                          />
-                        </div>
-                        <span className="" style={{ color: 'var(--secondary-color)', width: '120px', textAlign: 'left' }}>
-                          {article.categorie}
-                        </span>
-                        <span className="font-medium text-center flex-1" style={{ minWidth: 0 }}>
-                          {article.nom}
-                        </span>
-                        <span className="" style={{ color: 'var(--accent-color)', width: '120px', textAlign: 'right', marginRight: '1rem'}}>
-                          {article.montant > 0 ? `${article.montant.toFixed(2)} €` : ''}
-                        </span>
-                        <div style={{ width: '40px', display: 'flex', justifyContent: 'center' }}>
-                          <button
-                            onClick={() => supprimerArticle(article.id)}
-                            className="delete-btn"
-                            title="Supprimer"
-                          >
-                            <TrashIcon className="w-4 h-4" />
-                          </button>
+                  {articlesCoches.map((article, index) => {
+                    // Utiliser _id si disponible, sinon utiliser l'index comme clé de secours
+                    const articleKey = article._id || `temp-${index}-${article.nom}`;
+                    return (
+                      <div key={articleKey} className="liste-item liste-item-checked">
+                        <div className="flex items-center w-full">
+                          <div style={{ width: '40px', display: 'flex', justifyContent: 'start' }}>
+                            <input
+                              type="checkbox"
+                              checked={article.checked || false}
+                              onChange={() => handleToggleArticle(article._id, article.checked)}
+                              className="w-5 h-5 rounded border-2 border-secondary-color focus:ring-2 focus:ring-accent-color"
+                              disabled={syncing}
+                            />
+                          </div>
+                          <span className="" style={{ color: 'var(--secondary-color)', width: '120px', textAlign: 'left' }}>
+                            {article.categorie || 'Sans catégorie'}
+                          </span>
+                          <span className="font-medium text-center flex-1" style={{ minWidth: 0, textDecoration: 'line-through', opacity: 0.7 }}>
+                            {article.nom || 'Nom manquant'}
+                          </span>
+                          <span className="" style={{ color: 'var(--accent-color)', width: '120px', textAlign: 'right', marginRight: '1rem', textDecoration: 'line-through', opacity: 0.7 }}>
+                            {(article.montant || 0).toFixed(2)} €
+                          </span>
+                          <div style={{ width: '40px', display: 'flex', justifyContent: 'center' }}>
+                            <button
+                              onClick={() => handleSupprimerArticle(article._id)}
+                              className="delete-btn"
+                              title="Supprimer"
+                              disabled={syncing}
+                            >
+                              <TrashIcon className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
-
+            
             {/* Résumé */}
             <div className="card">
               <div className="flex justify-between items-center">
@@ -465,7 +569,7 @@ const ListeCourses = () => {
                   <span className="text-lg font-semibold" style={{ color: 'var(--secondary-color)' }}>
                     Total: {calculerTotal().toFixed(2)} €
                   </span>
-                  <div className="text-sm mt-1" style={{ color: 'rgba(236, 239, 244, 0.7)' }}>
+                  <div className="text-sm mt-1" style={{ color: 'rgba(236, 239, 244, 0.7)'}}>
                     {articles.length} article{articles.length > 1 ? 's' : ''} 
                     {articlesCoches.length > 0 && ` • ${articlesCoches.length} acheté${articlesCoches.length > 1 ? 's' : ''}`}
                   </div>
@@ -478,23 +582,20 @@ const ListeCourses = () => {
                 )}
               </div>
             </div>
-
           </div>
         )}
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem'}}>
-            <BoutonDons/>
-            </div>
-        {/* Modal de partage */}
-        {modalPartageOuvert && (
-          <ModalPartage
-            listeId={listeId}
-            nomListe={nomListe}
-            onClose={() => setModalPartageOuvert(false)}
-          />
-        )}
       </div>
+      
+      {/* Modal de partage */}
+      {modalPartage && currentListe && (
+        <ModalPartage
+          listeId={currentListe._id}
+          nomListe={nomListe}
+          onClose={() => setModalPartage(false)}
+        />
+      )}
     </>
-  )
-}
+  );
+};
 
-export default ListeCourses
+export default ListeCourses;

@@ -2,14 +2,13 @@ import mongoose from 'mongoose'
 
 // Schéma pour les articles
 const articleSchema = new mongoose.Schema({
-  id: Number,
   nom: { type: String, required: true },
   quantite: { type: Number, default: 1, required: true },
   categorie: { type: String, required: true },
   unite: String,
   checked: { type: Boolean, default: false },
   montant: { type: Number, default: 0 }
-}, { _id: false });
+});
 
 // Schéma pour les listes
 const listeSchema = new mongoose.Schema({
@@ -127,7 +126,7 @@ export const Liste = {
         await liste.save();
         
         return {
-          id: liste._id,
+          _id: liste._id,
           nom: liste.nom,
           articles: liste.articles,
           dateModification: liste.dateModification
@@ -144,7 +143,7 @@ export const Liste = {
         await liste.save();
         
         return {
-          id: liste._id,
+          _id: liste._id,
           nom: liste.nom,
           articles: liste.articles,
           dateCreation: liste.dateCreation,
@@ -170,7 +169,7 @@ export const Liste = {
       }
       
       return {
-        id: liste._id,
+        _id: liste._id,
         nom: liste.nom,
         articles: liste.articles,
         utilisateurId: liste.utilisateurId,
@@ -187,17 +186,43 @@ export const Liste = {
   // Obtenir une liste par ID
   async obtenirParId(id, utilisateurId) {
     try {
+      console.log('=== Début obtenirParId ===');
+      console.log('ID de la liste reçu:', id);
+      console.log('ID utilisateur reçu:', utilisateurId);
+      console.log('Type de l\'ID de la liste:', typeof id);
+      console.log('Type de l\'ID utilisateur:', typeof utilisateurId);
+      
+      // Vérifier que l'ID est valide
+      if (!id || !utilisateurId) {
+        console.error('Erreur: ID de liste ou utilisateur manquant');
+        return null;
+      }
+      
+      // Vérifier que l'ID est un ObjectId valide
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        console.error('Erreur: ID de liste invalide');
+        return null;
+      }
+      
       const liste = await ListeModel.findOne({ 
         _id: id,
         utilisateurId: utilisateurId
       });
       
       if (!liste) {
+        console.error('Erreur: Aucune liste trouvée avec ces paramètres');
         return null;
       }
       
-      return {
-        id: liste._id,
+      console.log('Liste trouvée en base:', {
+        _id: liste._id,
+        nom: liste.nom,
+        nbArticles: liste.articles ? liste.articles.length : 0,
+        utilisateurId: liste.utilisateurId
+      });
+      
+      const result = {
+        _id: liste._id,
         nom: liste.nom,
         articles: liste.articles,
         utilisateurId: liste.utilisateurId,
@@ -205,8 +230,11 @@ export const Liste = {
         dateModification: liste.dateModification,
         estPrincipale: liste.estPrincipale
       };
+      
+      console.log('=== Fin obtenirParId avec succès ===');
+      return result;
     } catch (error) {
-      console.error('Erreur lors de la récupération de la liste:', error);
+      console.error('Erreur lors de la récupération de la liste par ID:', error);
       throw error;
     }
   },
@@ -219,7 +247,7 @@ export const Liste = {
       }).sort({ dateModification: -1 });
       
       return listes.map(liste => ({
-        id: liste._id,
+        _id: liste._id,
         nom: liste.nom,
         articles: liste.articles,
         utilisateurId: liste.utilisateurId,
@@ -234,11 +262,14 @@ export const Liste = {
   },
 
   // Créer une nouvelle liste
-  async creerListe(nom, articles, utilisateurId) {
+  async creerListe(nom, articles = [], utilisateurId) {
     try {
+      // S'assurer que articles est un tableau
+      const articlesArray = Array.isArray(articles) ? articles : [];
+      
       const liste = new ListeModel({
         nom,
-        articles,
+        articles: articlesArray, // Utiliser le tableau validé
         utilisateurId: utilisateurId,
         estPrincipale: false
       });
@@ -246,7 +277,7 @@ export const Liste = {
       await liste.save();
       
       return {
-        id: liste._id,
+        _id: liste._id,
         nom: liste.nom,
         articles: liste.articles,
         utilisateurId: liste.utilisateurId,
@@ -284,7 +315,7 @@ export const Liste = {
       }
       
       return {
-        id: liste._id,
+        _id: liste._id,
         nom: liste.nom,
         articles: liste.articles,
         categorie: liste.categorie,
@@ -298,29 +329,29 @@ export const Liste = {
   },
 
   // Supprimer une liste
-  async supprimerListe(id, utilisateurId) {
-    try {
-      const result = await ListeModel.deleteOne({ 
-        _id: id,
-        utilisateurId: utilisateurId,
-        estPrincipale: false // Empêcher la suppression de la liste principale
-      });
+  // async supprimerListe(id, utilisateurId) {
+  //   try {
+  //     const result = await ListeModel.deleteOne({ 
+  //       _id: id,
+  //       utilisateurId: utilisateurId,
+  //       estPrincipale: false // Empêcher la suppression de la liste principale
+  //     });
       
-      if (result.deletedCount === 0) {
-        throw new Error('Liste non trouvée, non autorisée ou liste principale');
-      }
+  //     if (result.deletedCount === 0) {
+  //       throw new Error('Liste non trouvée, non autorisée ou liste principale');
+  //     }
       
-      // Supprimer aussi les tokens de partage associés
-      await TokenPartageModel.deleteMany({ 
-        listeId: id 
-      });
+  //     // Supprimer aussi les tokens de partage associés
+  //     await TokenPartageModel.deleteMany({ 
+  //       listeId: id 
+  //     });
       
-      return { id };
-    } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      throw error;
-    }
-  },
+  //     return { id };
+  //   } catch (error) {
+  //     console.error('Erreur lors de la suppression:', error);
+  //     throw error;
+  //   }
+  // },
 
   // Créer un token de partage
   async creerTokenPartage(listeId) {
@@ -346,6 +377,30 @@ export const Liste = {
     }
   },
 
+  // Supprimer une liste
+  async supprimerListe(listeId, utilisateurId) {
+    try {
+      // Vérifier si la liste existe et appartient à l'utilisateur
+      const liste = await ListeModel.findOne({
+        _id: listeId,
+        utilisateurId: utilisateurId,
+        estPrincipale: { $ne: true } // Empêcher la suppression de la liste principale
+      });
+
+      if (!liste) {
+        throw new Error('Liste non trouvée, non autorisée ou liste principale');
+      }
+
+      // Supprimer la liste
+      await ListeModel.deleteOne({ _id: listeId });
+      
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la suppression de la liste:', error);
+      throw error;
+    }
+  },
+
   // Obtenir une liste via un token de partage
   async obtenirParToken(token) {
     try {
@@ -361,7 +416,7 @@ export const Liste = {
       const liste = tokenPartage.listeId;
       
       return {
-        id: liste._id,
+        _id: liste._id,
         nom: liste.nom,
         articles: liste.articles,
         categorie: liste.categorie,
@@ -392,7 +447,7 @@ export const Liste = {
       await commande.save();
       
       return {
-        id: commande._id,
+        _id: commande._id,
         listeId: commande.listeId,
         serviceId: commande.serviceId,
         orderId: commande.orderId,
@@ -420,7 +475,7 @@ export const Liste = {
       }
       
       return {
-        id: commande._id,
+        _id: commande._id,
         listeId: commande.listeId,
         serviceId: commande.serviceId,
         orderId: commande.orderId,
@@ -449,7 +504,7 @@ export const Liste = {
       }
       
       return {
-        id: commande._id,
+        _id: commande._id,
         listeId: commande.listeId,
         serviceId: commande.serviceId,
         orderId: commande.orderId,
@@ -474,19 +529,22 @@ export const Liste = {
       liste.articles = articles;
       liste.dateModification = new Date();
       await liste.save();
+      console.log('[DEBUG] Liste sauvegardée (après check guest):', liste._id, liste.articles);
       return {
-        id: liste._id,
+        _id: liste._id,
         nom: liste.nom,
         articles: liste.articles,
         categorie: liste.categorie,
+        utilisateurId: liste.utilisateurId,
+        dateCreation: liste.dateCreation,
         dateModification: liste.dateModification
       };
     } catch (error) {
       console.error('Erreur lors de la mise à jour des articles par ID:', error);
       throw error;
     }
-  }
-};
+  },
+}
 
 // Fonction d'initialisation (optionnelle, pour créer des index si nécessaire)
 export const initializeDatabase = async () => {
@@ -495,13 +553,12 @@ export const initializeDatabase = async () => {
     await ListeModel.createIndexes();
     await TokenPartageModel.createIndexes();
     await CommandeModel.createIndexes();
-    
     console.log('✅ Base de données MongoDB initialisée');
   } catch (error) {
     console.error('❌ Erreur lors de l\'initialisation de la base de données:', error);
     throw error;
   }
-};
+}
 
 export { ListeModel, TokenPartageModel };
 export default Liste;

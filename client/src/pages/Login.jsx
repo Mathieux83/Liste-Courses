@@ -11,7 +11,8 @@ import {
   ArrowRightOnRectangleIcon 
 } from '@heroicons/react/24/solid'
 import '../styles/login.css';
-
+import { useDispatch } from 'react-redux';
+import { setMainUser } from '../store/slices/authSlice';
 export default function Login({ onLogin}) {
   const [formData, setFormData] = useState({
     email: '',
@@ -20,6 +21,7 @@ export default function Login({ onLogin}) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const dispatch = useDispatch()
   const navigate = useNavigate()
 
   const handleChange = (e) => {
@@ -57,19 +59,19 @@ export default function Login({ onLogin}) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-    
-    if (!validateForm()) {
-      return
-    }
-    
+    if (!validateForm()) return    
     setLoading(true)
     
     try {
       const response = await authService.login(formData.email, formData.password)
+      console.log('[Login] response.data =', response.data)
       toast.success('Connexion réussie !')
+      dispatch(setMainUser({
+        user: response.data.user || response.data,
+        token: response.data.token || response.data.accessToken || null
+      }))
       if (onLogin) onLogin();
       navigate('/')
-      
     } catch (err) {
       const errorMessage = err.response?.data?.message || 
                           err.message || 

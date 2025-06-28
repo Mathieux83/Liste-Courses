@@ -12,8 +12,8 @@ export function BouttonAccueil() {
   }
 
   const retourAccueil = () => {
-    navigate('/') // Change la route si besoin
-  }
+    navigate('/');
+  };
 
   return (
       <button
