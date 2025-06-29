@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSocket } from '../contexts/SocketContext';
 import { api } from '../utils/api';
+import logger from '../services/logger.js';
 
 export const useListeCourses = () => {
   const socketService = useSocket();
@@ -53,7 +54,7 @@ export const useListeCourses = () => {
         if (response && response._id) {
           const normalizedListe = normalizeApiResponse(response);
           setCurrentListe(normalizedListe);
-          console.log('[useListeCourses] Liste chargée avec succès:', {
+          logger.info('[useListeCourses] Liste chargée avec succès:', {
             _id: normalizedListe._id,
             nom: normalizedListe.nom,
             nbArticles: normalizedListe.articles?.length || 0
@@ -157,21 +158,24 @@ export const useListeCourses = () => {
   }, [id, socketService]);
 
   // Actions
+
+  // Ajouter un article à la liste
   const addArticle = useCallback(async (articleData) => {
     if (!socketService || !id) return null;
 
     try {
-      console.log('[useListeCourses] Ajout d\'un article:', articleData);
+      logger.info('[useListeCourses] Ajout d\'un article:', articleData);
       const response = await api.ajouterArticleAListe(id, articleData);
-      console.log('[useListeCourses] Réponse de l\'ajout d\'article:', response);
+      
       return response;
     } catch (err) {
-      console.error('[useListeCourses] Erreur lors de l\'ajout d\'article:', err);
+      logger.error('[useListeCourses] Erreur lors de l\'ajout d\'article:', err);
       setError(err.message);
       throw err;
     }
   }, [id, socketService]);
 
+  // Basculer l'état d'un article (coché/décoché)
   const toggleArticle = useCallback(async (articleId, checked) => {
     if (!socketService || !id) return null;
 
@@ -183,6 +187,7 @@ export const useListeCourses = () => {
     }
   }, [id, socketService]);
 
+  // Supprimer un article de la liste
   const deleteArticle = useCallback(async (articleId) => {
     if (!socketService || !id) return false;
 

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import logger from '../services/logger.js';
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -112,7 +113,7 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
   // console.log('Mot de passe reçu:', candidatePassword);
   // console.log('Hash stocké:', this.password);
   const result = await bcrypt.compare(candidatePassword, this.password);
-  // console.log('Résultat comparaison:', result);
+  
   return result;
 };
 

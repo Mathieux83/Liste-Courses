@@ -225,7 +225,7 @@ const SocketProvider = ({
       }
       
       try {
-        console.log('[SocketContext] Tentative de reconnexion...');
+        logger.info('[SocketContext] Tentative de reconnexion...');
         await socketService.disconnect();
         await socketService.connect(authState.token);
         updateConnectionStatus();
@@ -235,7 +235,7 @@ const SocketProvider = ({
           await socketService.joinListeRoom(currentListeId);
         }
         
-        console.log('[SocketContext] Reconnexion réussie');
+        logger.info('[SocketContext] Reconnexion réussie');
         return true;
       } catch (error) {
         console.error('[SocketContext] Échec de la reconnexion:', error);
@@ -266,7 +266,7 @@ const SocketProvider = ({
               console.error('[SocketContext] Erreur lors de la mise à jour de la liste:', response.error);
               reject(new Error(response.error));
             } else {
-              console.log('[SocketContext] Liste mise à jour avec succès:', listeData.id);
+              
               resolve(response);
             }
           });

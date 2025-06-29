@@ -6,12 +6,13 @@ import { exporterPDF, imprimerListe } from '../utils/exportUtils'
 import { PlusIcon, TrashIcon, ShareIcon, PrinterIcon, DocumentArrowDownIcon, ChevronDownIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 import '../styles/style-liste-courses.css'
 import LogoutButton from '../components/LogoutButton'
-import { BoutonAccueil } from '../components/BoutonAccueil'
+import { HomeButton } from '../components/HomeButton'
 import NProgress from 'nprogress'
 import useListeCourses from '../hooks/useListeCourses'
 import { useSocket } from '../contexts/SocketContext'
 import { api } from '../utils/api'
 import '../styles/index.css'
+import logger from '../services/logger.js';
 
 const ListeCourses = () => {
   const navigate = useNavigate();
@@ -188,7 +189,7 @@ const ListeCourses = () => {
       
       // Appeler l'API pour vider la liste
       const result = await api.effacerArticlesDeListe(currentListe._id);
-      console.log('[ListeCourses] Réponse du vidage de la liste:', result);
+      
       
       // Mettre à jour l'état local
       if (result && result._id) {
@@ -207,6 +208,8 @@ const ListeCourses = () => {
       setSyncing(false);
     }
   };
+
+ 
 
   // Calcul du total des articles
   const calculerTotal = useCallback(() => {
@@ -256,7 +259,7 @@ const ListeCourses = () => {
 
       {/* En-tête avec boutons de navigation */}
       <div className="flex justify-center gap-4 mb-6">
-        <BoutonAccueil />
+        <HomeButton />
         <LogoutButton />
       </div>
 

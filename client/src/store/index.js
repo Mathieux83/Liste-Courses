@@ -1,17 +1,22 @@
-// store/index.js - CORRIGÉ
-import { configureStore } from '@reduxjs/toolkit'
-import { authReducer } from './slices/authSlice'
-import { uiReducer } from './slices/uiSlice'
-import { deliveryReducer } from './slices/deliverySlice'
-import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
-import { persistConfig } from './persistConfig';
-import { combineReducers } from 'redux';
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import { authReducer } from './slices/authSlice';
+import { uiReducer } from './slices/uiSlice';
+import { deliveryReducer } from './slices/deliverySlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
   ui: uiReducer,
-  delivery: deliveryReducer
+  delivery: deliveryReducer,
 });
+
+const persistConfig = {
+  key: 'root',
+  storage,
+  whitelist: ['auth'],
+  version: 1,
+};
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
@@ -20,7 +25,6 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        // IMPORTANT : Ignorer les actions Redux Persist ET delivery
         ignoredActions: [
           FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER,
           'delivery/setSelectedStore'
@@ -30,15 +34,3 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
-
-
-// Pour intégrer la persistance dans l'app :
-//
-// import { PersistGate } from 'redux-persist/integration/react';
-// import { store, persistor } from './store';
-//
-// <Provider store={store}>
-//   <PersistGate loading={null} persistor={persistor}>
-//     <App />
-//   </PersistGate>
-// </Provider>

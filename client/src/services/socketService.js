@@ -1,3 +1,4 @@
+import logger from '../services/logger.js';
 import { io } from 'socket.io-client';
 
 // Configuration des constantes
@@ -689,7 +690,7 @@ class SocketService {
   emit(event, data = {}, options = {}) {
     // Si la socket n'est pas connectée, mettre en file d'attente
     if (!this.socket || !this.isConnected) {
-      console.log(`[SocketService] Socket non connectée, mise en attente de l'événement: ${event}`, data);
+      
       this._addPendingMessage(event, data, options);
       return false;
     }

@@ -72,7 +72,7 @@ export const exporterPDF = (articles, nomListe = 'Ma Liste de Courses') => {
     
     toast.success('PDF généré avec succès !')
   } catch (error) {
-    console.error('Erreur lors de la génération du PDF:', error)
+    logger.error('Erreur lors de la génération du PDF:', error)
     toast.error('Erreur lors de la génération du PDF')
   }
 }
@@ -104,7 +104,7 @@ export const capturerEcran = async (elementId, nomListe = 'liste') => {
     
     toast.success('Capture d\'écran sauvegardée !')
   } catch (error) {
-    console.error('Erreur lors de la capture:', error)
+    logger.error('Erreur lors de la capture:', error)
     toast.error('Erreur lors de la capture d\'écran')
   }
 }
@@ -114,7 +114,7 @@ export const imprimerListe = () => {
   try {
     window.print()
   } catch (error) {
-    console.error('Erreur lors de l\'impression:', error)
+    logger.error('Erreur lors de l\'impression:', error)
     toast.error('Erreur lors de l\'impression')
   }
 }

@@ -1,5 +1,6 @@
 import deliveryService from '../services/deliveryService.js';
-import { Liste } from '../models/Liste.js';
+import commandeSchema from '../models/Commande.js';
+import logger from '../services/logger.js';
 
 export const deliveryController = {
   // Obtenir les services de livraison disponibles
@@ -20,7 +21,7 @@ export const deliveryController = {
       const { listeId, serviceId, store } = req.body;
       
       // Vérifier que la liste existe et appartient à l'utilisateur
-      const liste = await Liste.obtenirParId(listeId, req.user.userId); // Correction: req.user.userId au lieu de req.user.id
+      const liste = await commandeSchema.obtenirParId(listeId, req.user.userId); // Correction: req.user.userId au lieu de req.user.id
       if (!liste) {
         return res.status(404).json({ error: 'Liste non trouvée' });
       }

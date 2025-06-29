@@ -5,6 +5,7 @@ import { api } from '../utils/api';
 import { getGuestUsername, needGuestUsernamePrompt, clearGuestUsername, setGuestUsername } from '../utils/guestUsernameStorage';
 import { useSocket } from '../contexts/SocketContext';
 import { useDispatch } from 'react-redux';
+import logger from '../services/logger.js';
 import { setGuest } from '../store/slices/authSlice';
 
 export const useListePartage = () => {
@@ -61,11 +62,7 @@ export const useListePartage = () => {
         }));
       }
       
-      console.log('[chargerListePartagee] Données reçues:', {
-        _id: normalizedData._id,
-        nbArticles: normalizedData.articles?.length || 0,
-        dateModification: normalizedData.dateModification
-      });
+      
       
       setListe(normalizedData);
       return normalizedData;
@@ -137,7 +134,7 @@ export const useListePartage = () => {
       
       const article = liste.articles.find(a => a._id === articleId);
       if (!article) {
-        console.error(`Article avec l'ID ${articleId} non trouvé`);
+        logger.error(`Article avec l'ID ${articleId} non trouvé`);
         return;
       }
       
@@ -163,7 +160,7 @@ export const useListePartage = () => {
       toast.success('Article mis à jour !');
       
     } catch (error) {
-      console.error('Erreur lors de la mise à jour de l\'article:', error);
+      logger.error('Erreur lors de la mise à jour de l\'article:', error);
       setListe(previousState);
       
       let errorMessage = 'Erreur lors de la mise à jour';

@@ -98,7 +98,7 @@ async function syncListes() {
       try {
         await fetch(request)
       } catch (error) {
-        console.error('Erreur de synchronisation:', error)
+        logger.error('Erreur de synchronisation:', error)
       }
     }
   }

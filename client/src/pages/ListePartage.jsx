@@ -13,7 +13,7 @@ import {
   UserIcon
 } from '@heroicons/react/24/solid';
 import NProgress from 'nprogress';
-import { BoutonAccueil } from '../components/BoutonAccueil';
+import { HomeButton } from '../components/HomeButton';
 import useListePartage from '../hooks/useListePartage';
 import { useSocket } from '../contexts/SocketContext';
 
@@ -44,7 +44,7 @@ export default function ListePartage() {
     if (!socket || !socket.socket) return;
 
     const handleListeUpdate = (updatedListe) => {
-      console.log('[ListePartage] Mise à jour de la liste reçue:', updatedListe);
+      
       
       // Normaliser les données reçues
       if (updatedListe && updatedListe.articles) {
@@ -199,7 +199,7 @@ export default function ListePartage() {
             </div>
           </div>
           <div>
-            <BoutonAccueil/>
+            <HomeButton/>
           </div>
         </div>
       </>
@@ -218,7 +218,7 @@ export default function ListePartage() {
           
           {/* Bouton retour */}
           <div className="mb-6">
-            <BoutonAccueil/>
+            <HomeButton/>
           </div>
 
           {/* Header de la liste partagée */}

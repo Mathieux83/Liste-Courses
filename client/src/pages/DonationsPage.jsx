@@ -1,7 +1,7 @@
 // src/pages/DonationsPage.jsx
 import React, { useEffect, useState } from 'react';
 import DonationSection from '../components/DonationSection';
-import { BoutonAccueil } from '../components/BoutonAccueil';
+import { HomeButton } from '../components/HomeButton';
 import '../styles/donation.css'
 import LogoutButton from '../components/LogoutButton';
 import NProgress from 'nprogress';
@@ -34,7 +34,7 @@ export default function DonationsPage() {
       <div className='donation-page'>
         <div style={{ display:'flex', justifyContent: 'space-between', gap: '57rem'}} >
         <div className="btn-accueil-donation">
-          <BoutonAccueil/>
+          <HomeButton/>
         </div>
         <div className="btn-logout-dons">
           <LogoutButton/>

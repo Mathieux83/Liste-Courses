@@ -1,4 +1,5 @@
-import { TokenPartageModel } from '../models/Liste.js';
+import tokenPartageSchema from '../models/TokenPartage.js';
+import logger from '../services/logger.js';
 
 // Middleware pour vérifier le token de partage dans l'URL
 export default async function verifTokenPartage(req, res, next) {
@@ -9,13 +10,14 @@ export default async function verifTokenPartage(req, res, next) {
   }
   try {
     // Recherche du token de partage valide (non expiré)
-    const tokenPartage = await TokenPartageModel.findOne({
+    const tokenPartage = await tokenPartageSchema.findOne({
       token,
       dateExpiration: { $gt: new Date() }
     }).populate('listeId');
-    console.log('Résultat recherche tokenPartage :', tokenPartage);
+    
 
     if (!tokenPartage || !tokenPartage.listeId) {
+      
       return res.status(401).json({ message: 'Token de partage invalide ou expiré' });
     }
 

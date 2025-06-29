@@ -1,22 +1,25 @@
-import express from 'express'
-import cors from 'cors'
-import helmet from 'helmet'
-import rateLimit from 'express-rate-limit'
-import dotenv from 'dotenv'
-import { fileURLToPath } from 'url'
-import { dirname } from 'path'
-import listesRoutes from './routes/listes.js'
-import authRoutes from './routes/auth.js'
-import notificationsRoutes from './routes/notifications.js'
-import deliveryRoutes from './routes/delivery.js'
-import { initializeSocketIO } from './socket.js'
-import mongoose from 'mongoose'
-import cookieParser from 'cookie-parser'
+import logger from './services/logger.js';
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import listesRoutes from './routes/listes.js';
+import authRoutes from './routes/auth.js';
+import notificationsRoutes from './routes/notifications.js';
+import deliveryRoutes from './routes/delivery.js';
+import { initializeSocketIO } from './socket.js';
+import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
 
 // Configuration
 dotenv.config()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
+
+
 
 const mongoURI = `mongodb+srv://${process.env.MONGO_USER}:${encodeURIComponent(process.env.MONGO_PASSWORD)}@${process.env.MONGO_CLUSTER}/${process.env.MONGO_DB}?retryWrites=true&w=majority&appName=Cluster0`
 
@@ -52,22 +55,22 @@ const allowedOrigins = [
 // Configuration CORS plus permissive pour le développement
 app.use(cors({
   origin: function (origin, callback) {
-    console.log('Origine de la requête:', origin);
+    // console.log('Origine de la requête:', origin);
     
     // En développement, on autorise toutes les origines
     if (process.env.NODE_ENV === 'development') {
-      console.log('Mode développement - Toutes les origines sont autorisées');
+      // console.log('Mode développement - Toutes les origines sont autorisées');
       return callback(null, true);
     }
     
     // En production, on vérifie les origines autorisées
     if (!origin || allowedOrigins.includes(origin)) {
-      console.log(`Origine autorisée: ${origin}`);
+      // console.log(`Origine autorisée: ${origin}`);
       return callback(null, true);
     }
     
     // Si l'origine n'est pas autorisée en production
-    console.log(`Origine non autorisée: ${origin}`);
+    // console.log(`Origine non autorisée: ${origin}`);
     return callback(new Error('Origine non autorisée par CORS'));
   },
   credentials: true,
@@ -114,47 +117,73 @@ app.use((req, res) => {
 
 // Gestionnaire d'erreurs global
 app.use((error, req, res, next) => {
-  console.error('Erreur serveur:', error)
-  res.status(500).json({ 
-    error: 'Erreur interne du serveur',
-    message: process.env.NODE_ENV === 'development' ? error.message : 'Une erreur est survenue'
-  })
-})
+  errorLogger.error(error.message, { 
+    stack: error.stack,
+    path: req.path,
+    method: req.method
+  });
+
+  const status = error.statusCode || 500;
+  const message = error.message || 'Erreur interne du serveur';
+
+  res.status(status).json({ 
+    error: message,
+    details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+  });
+});
 
 
 
 // Initialisation de la base de données et démarrage du serveur
 const startServer = () => {
   const server = app.listen(PORT, () => {
-    console.log(`🚀 Serveur démarré sur le port ${PORT}`)
-    console.log(`📡 API disponible sur http://localhost:${PORT}/api`)
-    console.log(`🔍 Health check: http://localhost:${PORT}/api/health`)
-  })
+    // console.log(`🚀 Serveur démarré sur le port ${PORT}`)
+    // console.log(`📡 API disponible sur http://localhost:${PORT}/api`)
+    // console.log(`🔍 Health check: http://localhost:${PORT}/api/health`)
+    
+    logger.info(`🚀 Serveur démarré sur le port ${PORT}`, {
+      timestamp: new Date().toISOString()})
+    logger.info(`📡 API disponible sur http://localhost:${PORT}/api`, {
+      timestamp: new Date().toISOString()})
+    logger.info(`🔍 Health check: http://localhost:${PORT}/api/health`, {
+      timestamp: new Date().toISOString()})
 
-  // Initialisation de Socket.IO
-  const io = initializeSocketIO(server)
-  console.log('✨ Socket.IO initialisé')
+    
+      // Initialisation de Socket.IO
+    const io = initializeSocketIO(server)
+    // console.log('✨ Socket.IO initialisé')
+    
+    logger.info('✨ Socket.IO initialisé', {
+      timestamp: new Date().toISOString()})
+    })
 }
 
 // console.log('Tentative de connexion à MongoDB via l\URI :', mongoURI)
 mongoose.connect(mongoURI)
 
 .then(() => {
-  console.log('✅ Connexion à MongoDB établie')
+  // console.log('✅ Connexion à MongoDB établie')
+  
+  logger.info('✅ Connexion à MongoDB établie', {
+    timestamp: new Date().toISOString()})
   startServer() // Démarre le serveur SEULEMENT si MongoDB est OK
 })
 .catch((err) => {
-  console.error('❌ Erreur de connexion à MongoDB', err)
-  process.exit(1)
+  dbLogger.error('❌ Erreur de connexion à MongoDB', err);
+  process.exit(1);
 })
 
 // Gestion propre de l'arrêt
 process.on('SIGINT', () => {
-  console.log('\n🛑 Arrêt du serveur...')
+  // console.log('\n🛑 Arrêt du serveur...')
+  logger.info('🛑 Arrêt du serveur via SIGINT', {
+    timestamp: new Date().toISOString()})
   process.exit(0)
 })
 
 process.on('SIGTERM', () => {
-  console.log('\n🛑 Arrêt du serveur...')
+  // console.log('\n🛑 Arrêt du serveur...')
+  logger.info('🛑 Arrêt du serveur via SIGTERM', {
+    timestamp: new Date().toISOString()})
   process.exit(0)
 })

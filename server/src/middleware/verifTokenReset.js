@@ -13,7 +13,7 @@ export default async function verifTokenReset(req, res, next) {
             token,
             dateExpiration: { $gt: new Date() }
         }).populate('email');
-        console.log('Résultat recherche tokenReset :', tokenReset);
+        
 
         if (!tokenReset || !tokenReset.email) {
             return res.status(401).json({ message: 'Token de réinitialisation invalide ou expiré' });

@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 import '../styles/style-liste-accueil.css';
 import LogoutButton from '../components/LogoutButton';
 import NProgress from 'nprogress';
-import { BoutonDons } from '../components/BoutonDons';
+import { DonateButton } from '../components/DonateButton';
 import { useSelector } from 'react-redux';
 import { api } from '../utils/api';
 import useDashboard from '../hooks/useDashboard';
@@ -376,7 +376,7 @@ export default function Dashboard({ isAuthenticated, onLogout, premierChargement
           display: 'flex', 
           justifyContent: 'center'
         }}>
-          <BoutonDons />
+          <DonateButton />
         </div>
       </div>
     </div>

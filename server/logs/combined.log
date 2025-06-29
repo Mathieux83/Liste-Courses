@@ -1,0 +1,291 @@
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:46:13.678Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:46:13.683Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:46:13.683Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:46:13.684Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:46:13.686Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:47:07.860Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:47:07.866Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:47:07.866Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:47:07.867Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:47:07.869Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:47:12.893Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:47:12.898Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:47:12.898Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:47:12.899Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:47:12.901Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:47:22.245Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:47:22.249Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:47:22.250Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:47:22.250Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:47:22.252Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:47:47.151Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:47:47.156Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:47:47.156Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:47:47.157Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:47:47.159Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:47:55.276Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:47:55.280Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:47:55.281Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:47:55.281Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:47:55.283Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:48:18.687Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:48:18.692Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:48:18.693Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:48:18.693Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:48:18.695Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:48:27.222Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:48:27.227Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:48:27.227Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:48:27.228Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:48:27.230Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:48:34.607Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:48:34.612Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:48:34.612Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:48:34.613Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:48:34.615Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:48:37.414Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:48:37.419Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:48:37.419Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:48:37.420Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:48:37.422Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:49:01.490Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:49:01.494Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:49:01.495Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:49:01.495Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:49:01.497Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:49:14.969Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:49:14.973Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:49:14.974Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:49:14.974Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:49:14.976Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:49:23.371Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:49:23.375Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:49:23.376Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:49:23.376Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:49:23.378Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:49:46.403Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:49:46.408Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:49:46.408Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:49:46.408Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:49:46.411Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:49:48.788Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:49:48.793Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:49:48.793Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:49:48.794Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:49:48.796Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:49:51.620Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:49:51.625Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:49:51.625Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:49:51.626Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:49:51.628Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:49:54.089Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:49:54.097Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:49:54.098Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:49:54.099Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:49:54.102Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:49:58.211Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:49:58.216Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:49:58.216Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:49:58.217Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:49:58.219Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:50:00.455Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:50:00.464Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:50:00.465Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:50:00.466Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:50:00.470Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:54:20.385Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:54:20.389Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:54:20.390Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:54:20.390Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:54:20.392Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:56:44.259Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:56:44.263Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:56:44.264Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:56:44.264Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:56:44.266Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:56:53.641Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:56:53.646Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:56:53.646Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:56:53.646Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:56:53.648Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:57:04.669Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:57:04.674Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:57:04.674Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:57:04.675Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:57:04.677Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:57:10.579Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:57:10.583Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:57:10.583Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:57:10.584Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:57:10.586Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:57:33.605Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:57:33.610Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:57:33.610Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:57:33.611Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:57:33.613Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:57:42.800Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:57:42.805Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:57:42.805Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:57:42.805Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:57:42.807Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:58:03.837Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:58:03.842Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:58:03.842Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:58:03.843Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:58:03.845Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:58:16.886Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:58:16.890Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:58:16.891Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:58:16.891Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:58:16.893Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:59:01.380Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:59:01.390Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:59:01.390Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:59:01.391Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:59:01.393Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T15:59:23.049Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T15:59:23.054Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T15:59:23.054Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T15:59:23.054Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T15:59:23.057Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:01:47.066Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:01:47.071Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:01:47.071Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:01:47.072Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:01:47.074Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:02:15.363Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:02:15.367Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:02:15.368Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:02:15.368Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:02:15.370Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:04:42.007Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:04:42.012Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:04:42.012Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:04:42.013Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:04:42.015Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:04:44.305Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:04:44.310Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:04:44.310Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:04:44.311Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:04:44.313Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:04:46.184Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:04:46.189Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:04:46.189Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:04:46.189Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:04:46.192Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:04:47.884Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:04:47.889Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:04:47.889Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:04:47.890Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:04:47.892Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:04:54.388Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:04:54.394Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:04:54.395Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:04:54.395Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:04:54.398Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:04:57.326Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:04:57.330Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:04:57.331Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:04:57.331Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:04:57.333Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:05:00.045Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:05:00.050Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:05:00.050Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:05:00.051Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:05:00.053Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:08:06.165Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:08:06.170Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:08:06.171Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:08:06.171Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:08:06.174Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:08:08.476Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:08:08.483Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:08:08.483Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:08:08.484Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:08:08.487Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:08:13.106Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:08:13.111Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:08:13.111Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:08:13.112Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:08:13.114Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:08:52.174Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:08:52.179Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:08:52.179Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:08:52.180Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:08:52.182Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:08:58.850Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:08:58.856Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:08:58.856Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:08:58.857Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:08:58.859Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:09:09.350Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:09:09.355Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:09:09.355Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:09:09.356Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:09:09.358Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:09:39.896Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:09:39.903Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:09:39.904Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:09:39.904Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:09:39.907Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:09:47.556Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:09:47.560Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:09:47.561Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:09:47.561Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:09:47.563Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:10:12.524Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:10:12.529Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:10:12.530Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:10:12.530Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:10:12.532Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:10:34.114Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:10:34.119Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:10:34.119Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:10:34.120Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:10:34.122Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:10:36.233Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:10:36.238Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:10:36.238Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:10:36.238Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:10:36.241Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:10:38.288Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:10:38.293Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:10:38.293Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:10:38.294Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:10:38.296Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:13:47.330Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:13:47.334Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:13:47.335Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:13:47.335Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:13:47.337Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:13:49.404Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:13:49.410Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:13:49.411Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:13:49.411Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:13:49.413Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:13:50.749Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:14:01.370Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:14:32.330Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:14:43.401Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:14:45.140Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:17:40.835Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:17:47.765Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:17:47.770Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:17:47.770Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:17:47.771Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:17:47.773Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:17:54.061Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:17:54.067Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:17:54.068Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:17:54.069Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:17:54.071Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:19:40.397Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:19:40.411Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:19:40.412Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:19:40.412Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:19:40.414Z"}
+{"level":"info","message":"✅ Connexion à MongoDB établie","timestamp":"2025-06-29T16:21:31.660Z"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 3001","timestamp":"2025-06-29T16:21:31.665Z"}
+{"level":"info","message":"📡 API disponible sur http://localhost:3001/api","timestamp":"2025-06-29T16:21:31.665Z"}
+{"level":"info","message":"🔍 Health check: http://localhost:3001/api/health","timestamp":"2025-06-29T16:21:31.666Z"}
+{"level":"info","message":"✨ Socket.IO initialisé","timestamp":"2025-06-29T16:21:31.668Z"}

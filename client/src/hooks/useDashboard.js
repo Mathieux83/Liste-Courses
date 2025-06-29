@@ -104,7 +104,7 @@ export const useDashboard = () => {
       await chargerListes();
       navigate(`/liste/${response.data.id}`);
     } catch (err) {
-      console.error('Erreur lors de la duplication de la liste:', err);
+      logger.error('Erreur lors de la duplication de la liste:', err);
       toast.error('Erreur lors de la duplication de la liste');
     }
   };

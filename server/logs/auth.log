@@ -1,0 +1,8 @@
+{"action":"USER_LOGOUT","email":"dev@dev.com","level":"info","message":"Déconnexion de l'utilisateur","name":"Dev","timestamp":"2025-06-29T16:23:25.383Z","userId":"685f012f22a8523576918723"}
+{"action":"USER_LOGOUT_COOKIE_CLEARED","level":"info","message":"Cookie de session supprimé avec succès","timestamp":"2025-06-29T16:23:25.384Z"}
+{"action":"USER_REGISTRATION","email":"test@test.com","level":"info","message":"Nouvel utilisateur enregistré avec succès","name":"test","timestamp":"2025-06-29T16:23:53.560Z","userId":"68616899d4cc4eab31ed8a7b"}
+{"action":"USER_LOGIN_ATTEMPT","email":"test@test.com","level":"info","message":"Tentative de connexion pour: ","name":"test","timestamp":"2025-06-29T16:24:14.856Z","userId":"68616899d4cc4eab31ed8a7b"}
+{"action":"USER_LOGIN","email":"test@test.com","level":"info","message":"Connexion réussie","name":"test","timestamp":"2025-06-29T16:24:14.914Z","userId":"68616899d4cc4eab31ed8a7b"}
+{"action":"USER_LOGOUT","email":"test@test.com","level":"info","message":"Déconnexion de l'utilisateur","name":"test","timestamp":"2025-06-29T16:24:17.341Z","userId":"68616899d4cc4eab31ed8a7b"}
+{"action":"USER_LOGOUT_COOKIE_CLEARED","level":"info","message":"Cookie de session supprimé avec succès","timestamp":"2025-06-29T16:24:17.341Z"}
+{"action":"USER_REGISTRATION","email":"car.math@live.fr","level":"info","message":"Nouvel utilisateur enregistré avec succès","name":"MAIL","timestamp":"2025-06-29T16:24:59.117Z","userId":"686168dbd4cc4eab31ed8a82"}

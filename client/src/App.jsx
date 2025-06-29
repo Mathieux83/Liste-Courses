@@ -1,26 +1,22 @@
-import React, { useEffect } from 'react'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import { selectAppAuthState } from './store/slices/authSlice'
-import ListeCourses from './pages/ListeCourses'
-import ListePartagee from './pages/ListePartage'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import Dashboard from './pages/Dashboard'
-import { BouttonAccueil } from './components/BouttonAccueil'
-import DonationsPage from './pages/DonationsPage'
+import React, { useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectAppAuthState } from './store/slices/authSlice';
+import ListeCourses from './pages/ListeCourses';
+import ListePartagee from './pages/ListePartage';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import DonationsPage from './pages/DonationsPage';
 import ForgotPassword from './pages/ForgotPassword';
 import usePageLoader from './hooks/usePageLoader';
 import NProgress from 'nprogress';
-import ResetPassword from './pages/ResetPassword'
+import ResetPassword from './pages/ResetPassword';
+import PrivateRoute from './components/PrivateRoute';
+import PublicRoute from './components/PublicRoute';
 
 function App() {
-  const location = useLocation();
-  const { isAuthenticated, loading } = useSelector(selectAppAuthState);
-
-  // Pour afficher le bouton accueil uniquement sur /liste/:id
-  const matchListe = /^\/liste\/[^/]+$/.test(location.pathname);
-
+  const { loading } = useSelector(selectAppAuthState);
   usePageLoader();
 
   useEffect(() => {
@@ -32,62 +28,29 @@ function App() {
   }, [loading]);
 
   if (loading) {
-    return null; // On retire le spinner manuel, seul NProgress s'affiche
+    return null;
   }
-
-  // Routes protégées par authentification
-  const PrivateRoute = ({ children }) => {
-    return isAuthenticated ? children : <Navigate to="/login" replace />;
-  };
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--primary-color)' }}>
       <Routes>
         {/* Routes publiques */}
-        <Route 
-          path="/login" 
-          element={!isAuthenticated ? <Login /> : <Navigate to="/dashboard" replace />} 
-        />
-        <Route 
-          path="/register" 
-          element={!isAuthenticated ? <Register /> : <Navigate to="/dashboard" replace />} 
-        />
-        <Route 
-          path="/dashboard" 
-          element={
-            isAuthenticated ? 
-              <Dashboard /> : 
-              <Navigate to="/login" replace />
-          } 
-        />
+        <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+        <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+        <Route path="/reset-password" element={<PublicRoute><ResetPassword /></PublicRoute>} />
         <Route path="/liste-partagee/:token" element={<ListePartagee />} />
         <Route path="/donations" element={<DonationsPage />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Routes protégées */}
-        <Route 
-          path="/" 
-          element={
-            isAuthenticated ? 
-              <Navigate to="/dashboard" replace /> : 
-              <Navigate to="/login" replace />
-          } 
-        />
-        <Route 
-          path="/listes" 
-        />
-        <Route 
-          path="/liste/:id" 
-          element={
-            <PrivateRoute>
-              <ListeCourses />
-            </PrivateRoute>
-          } 
-        />
+        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/liste/:id" element={<PrivateRoute><ListeCourses /></PrivateRoute>} />
+
+        {/* Redirection par défaut */}
+        <Route path="/*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

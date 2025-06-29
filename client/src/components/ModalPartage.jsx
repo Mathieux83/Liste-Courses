@@ -25,7 +25,7 @@ const ModalPartage = ({ listeId, nomListe, onClose }) => {
       toast.success('Lien de partage généré !')
     } catch (error) {
       toast.error('Erreur lors de la génération du lien')
-      console.error('Erreur:', error)
+      logger.error('Erreur:', error)
     } finally {
       setLoading(false)
     }

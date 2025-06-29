@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-export function BoutonForgot() {
+export function ForgotPasswordButton() {
     const navigate = useNavigate();
     const location = useLocation();
 

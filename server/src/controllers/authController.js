@@ -5,6 +5,7 @@ import User from '../models/User.js';
 import { validationResult } from 'express-validator';
 import { TokenResetPassword } from '../models/User.js';
 import { sendPasswordResetEmail } from '../services/emailService.js';
+import { authLogger } from '../services/logger.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -32,6 +33,13 @@ export const register= async (req, res) => {
 
     await user.save();
     console.log('Utilisateur enregistrer : ',user)
+    authLogger.info('Nouvel utilisateur enregistré avec succès', {
+      userId: user._id,
+      email: user.email,
+      name: user.name,
+      timestamp: new Date().toISOString(),
+      action: 'USER_REGISTRATION'
+    });
 
     // Créer le token JWT
     const token = jwt.sign(
@@ -63,8 +71,14 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
 
-    console.log('Tentative de connexion pour:', email);
-    console.log('Utilisateur trouvé:', user ? user.email : null);
+    authLogger.info(`Tentative de connexion pour: `, {
+      userId: user._id,
+      name: user.name,
+      email: user.email,
+      timestamp: new Date().toISOString(),
+      action: 'USER_LOGIN_ATTEMPT'
+      });
+    // console.log('Utilisateur trouvé:', user ? user.email : null);
 
     // Vérifier le mot de passe
     const isMatch = await user.comparePassword(password);
@@ -72,7 +86,14 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
 
-    console.log('Coonection réussie pour :',user ? user.email : null)
+    // console.log('Coonection réussie pour :',user ? user.email : null)
+    authLogger.info('Connexion réussie', {
+      userId: user._id,
+      email: user.email,
+      name: user.name,
+      timestamp: new Date().toISOString(),
+      action: 'USER_LOGIN'
+    });
 
     // Créer le token JWT
     const token = jwt.sign(
@@ -124,15 +145,37 @@ export const logout = async (req, res) => {
         const user = await User.findById(decoded.userId).select('email name');
         
         if (user) {
-          console.log('Déconnexion de l\'utilisateur:', user.email);
+          authLogger.info('Déconnexion de l\'utilisateur', {
+            userId: user._id,
+            email: user.email,
+            name: user.name,
+            timestamp: new Date().toISOString(),
+            action: 'USER_LOGOUT'
+          });
+          // console.log('Déconnexion de l\'utilisateur:', user.email);
         } else {
-          console.log('Déconnexion - utilisateur non trouvé dans la base');
+          authLogger.warn('Tentative de déconnexion - utilisateur non trouvé', {
+            token,
+            timestamp: new Date().toISOString(),
+            action: 'USER_LOGOUT_ATTEMPT'
+          });
+          // console.log('Déconnexion - utilisateur non trouvé dans la base');
         }
       } catch (jwtError) {
-        console.log('Déconnexion avec token invalide ou expiré');
+        authLogger.warn('Tentative de déconnexion avec token invalide ou expiré', {
+          token,
+          error: jwtError.message,
+          timestamp: new Date().toISOString(),
+          action: 'USER_LOGOUT_ATTEMPT'
+        });
+        // console.log('Déconnexion avec token invalide ou expiré');
       }
     } else {
-      console.log('Tentative de déconnexion sans token');
+      authLogger.warn('Tentative de déconnexion sans token', {
+        timestamp: new Date().toISOString(),
+        action: 'USER_LOGOUT_ATTEMPT'
+      });
+      // console.log('Tentative de déconnexion sans token');
     }
     
     res.clearCookie('token', {
@@ -141,11 +184,15 @@ export const logout = async (req, res) => {
       sameSite: 'strict'
     });
     
+    authLogger.info('Cookie de session supprimé avec succès', {
+      timestamp: new Date().toISOString(),
+      action: 'USER_LOGOUT_COOKIE_CLEARED'
+    });
     console.log('Cookie de session supprimé avec succès');
     res.json({ message: 'Déconnexion réussie' });
     
   } catch (error) {
-    console.log('Erreur lors de la déconnexion:', error.message);
+    
     res.status(500).json({ message: 'Erreur serveur' });
   }
 }
@@ -193,7 +240,8 @@ export const forgotPassword = async (req, res) => {
 
     res.json({ message: 'Si votre email est enregistré, vous recevrez un lien de réinitialisation' });
   } catch (error) {
-    console.error('Erreur lors de la demande de réinitialisation:', error);
+    authLogger.error('Erreur lors de la demande de réinitialisation de mot de passe:', error);
+    // console.error('Erreur lors de la demande de réinitialisation:', error);
     res.status(500).json({ message: 'Erreur lors du traitement de votre demande' });
   }
 };
@@ -220,7 +268,8 @@ export const verifyResetToken = async (req, res) => {
 
     res.json({ valid: true, email: tokenDoc.email });
   } catch (error) {
-    console.error('Erreur vérification token:', error);
+    authLogger.error('Erreur vérification token:', error);
+    // console.error('Erreur vérification token:', error);
     res.status(500).json({ valid: false, message: 'Erreur serveur' });
   }
 };
@@ -263,7 +312,7 @@ export const resetPassword = async (req, res) => {
     // Répondre avec succès
     res.json({ message: 'Mot de passe réinitialisé avec succès' });
   } catch (error) {
-    console.error('Erreur réinitialisation mot de passe:', error);
+    authLogger.error('Erreur réinitialisation mot de passe:', error);
     res.status(500).json({ message: 'Erreur serveur lors de la réinitialisation du mot de passe' });
   }
 };

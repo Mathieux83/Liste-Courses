@@ -1,3 +1,4 @@
+import logger from '../services/logger.js';
 import { saveSubscription, sendPushNotification } from '../services/pushNotifications.js';
 
 export const notificationsController = {

@@ -64,7 +64,7 @@ export default function Login({ onLogin}) {
     
     try {
       const response = await authService.login(formData.email, formData.password)
-      console.log('[Login] response.data =', response.data)
+      
       toast.success('Connexion réussie !')
       dispatch(setMainUser({
         user: response.data.user || response.data,

@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { GiftIcon } from "@heroicons/react/24/solid";
 
-export function BoutonDons() {
+export function DonateButton() {
     const navigate = useNavigate()
     const location = useLocation()
 

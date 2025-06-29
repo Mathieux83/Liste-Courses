@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { apiLogger } from './logger.js';
 
 // Configuration du transporteur SMTP
 const transporter = nodemailer.createTransport({
@@ -13,13 +14,13 @@ const transporter = nodemailer.createTransport({
 });
 
 // Vérification de la configuration au démarrage
-console.log('Configuration SMTP chargée :', {
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT || '587', 10),
-    secure: process.env.SMTP_SECURE,
-    user: process.env.SMTP_USER ? 'défini' : 'non défini',
-    hasPassword: !!process.env.SMTP_PASS
-  });
+// console.log('Configuration SMTP chargée :', {
+//     host: process.env.SMTP_HOST,
+//     port: parseInt(process.env.SMTP_PORT || '587', 10),
+//     secure: process.env.SMTP_SECURE,
+//     user: process.env.SMTP_USER ? 'défini' : 'non défini',
+//     hasPassword: !!process.env.SMTP_PASS
+//   });
 /**
  * Envoie un email de réinitialisation de mot de passe
  * @param {string} to - Adresse email du destinataire
@@ -56,10 +57,17 @@ export const sendPasswordResetEmail = async (to, token, name = 'Utilisateur') =>
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log('Email de réinitialisation envoyé:', info.messageId);
+    
     return { success: true, messageId: info.messageId };
+    apiLogger.info('Email de réinitialisation envoyé', {
+      to,
+      messageId: info.messageId
+    });
   } catch (error) {
-    console.error('Erreur lors de l\'envoi de l\'email:', error);
+    apiLogger.error('Erreur lors de l\'envoi de l\'email de réinitialisation', {
+      to,
+      error: error.message
+    });
     throw new Error('Erreur lors de l\'envoi de l\'email de réinitialisation');
   }
 };
