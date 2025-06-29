@@ -6,7 +6,7 @@ import { exporterPDF, imprimerListe } from '../utils/exportUtils'
 import { PlusIcon, TrashIcon, ShareIcon, PrinterIcon, DocumentArrowDownIcon, ChevronDownIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 import '../styles/style-liste-courses.css'
 import LogoutButton from '../components/LogoutButton'
-import { BouttonAccueil } from '../components/BouttonAccueil'
+import { BoutonAccueil } from '../components/BoutonAccueil'
 import NProgress from 'nprogress'
 import useListeCourses from '../hooks/useListeCourses'
 import { useSocket } from '../contexts/SocketContext'
@@ -256,7 +256,7 @@ const ListeCourses = () => {
 
       {/* En-tête avec boutons de navigation */}
       <div className="flex justify-center gap-4 mb-6">
-        <BouttonAccueil />
+        <BoutonAccueil />
         <LogoutButton />
       </div>
 

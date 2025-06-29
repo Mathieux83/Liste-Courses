@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { BoutonForgot } from '../components/BoutonForgot';
-import { BouttonAccueil } from '../components/BouttonAccueil';
+import { BoutonAccueil } from '../components/BoutonAccueil';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { 
@@ -205,7 +205,7 @@ export default function ResetPassword() {
               <div className="flex flex-col items-center space-y-4 -mb-3" style={{ }}>
                 <BoutonForgot />
                 <div className="">
-                  <BouttonAccueil />
+                  <BoutonAccueil />
                 </div>
               </div>
             </div>

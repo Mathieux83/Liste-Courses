@@ -13,7 +13,7 @@ import {
   UserIcon
 } from '@heroicons/react/24/solid';
 import NProgress from 'nprogress';
-import { BouttonAccueil } from '../components/BouttonAccueil';
+import { BoutonAccueil } from '../components/BoutonAccueil';
 import useListePartage from '../hooks/useListePartage';
 import { useSocket } from '../contexts/SocketContext';
 
@@ -199,7 +199,7 @@ export default function ListePartage() {
             </div>
           </div>
           <div>
-            <BouttonAccueil/>
+            <BoutonAccueil/>
           </div>
         </div>
       </>
@@ -218,7 +218,7 @@ export default function ListePartage() {
           
           {/* Bouton retour */}
           <div className="mb-6">
-            <BouttonAccueil/>
+            <BoutonAccueil/>
           </div>
 
           {/* Header de la liste partagée */}
