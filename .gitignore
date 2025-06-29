@@ -1,9 +1,7 @@
 /server/node_modules
 /server/.env
-/server/database.sqlite
 
 /client/node_modules
 /client/.env
-/Structure.txt
-test.html
 /Docs
+/.gemini
